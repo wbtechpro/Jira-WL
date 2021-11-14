@@ -1,0 +1,60 @@
+version: '2.4'
+services:
+
+  api:
+    build:
+      context: ./api
+      target: with_entrypoint
+    volumes:
+      - /usr/src/webroot
+    depends_on:
+      - db
+    command: >
+      uwsgi
+        --socket 0.0.0.0:8000
+        --master
+        --processes 1
+        --threads 4
+        --wsgi-file ./jira/wsgi.py
+
+# Use --socket 0.0.0.0:8000 for working with nginx
+# Use --http 0.0.0.0:8000 for working with nginx
+
+  cron:
+    build:
+      context: ./api
+      target: without_entrypoint
+    depends_on:
+      - db
+    command: >
+      cron -f
+
+  db:
+    image: postgres:10
+    environment:
+      POSTGRES_PASSWORD: "password"
+    volumes:
+      - "db:/var/lib/postgresql/data/"
+    # POSTGRES_HOST_AUTH_METHOD=trust
+
+  nginx:
+    build: ./nginx
+    depends_on:
+      - api
+    volumes_from:
+      - api
+    ports:
+      - "127.0.0.1:8888:80"
+    environment:
+      DOLLAR: "$$"
+      SERVER_NAME: ${SERVER_NAME}
+      DJANGO_HOST: "api"
+      DJANGO_PORT: ${DJANGO_PORT}
+    command: >
+      /bin/bash -c "
+        envsubst < /etc/nginx/conf.d/default.conf.tmpl > /etc/nginx/conf.d/default.conf &&
+        exec nginx -g 'daemon off;'
+      "
+
+volumes:
+  db:
