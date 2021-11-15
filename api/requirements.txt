@@ -16,4 +16,4 @@ six==1.15.0
 sqlparse==0.4.1
 urllib3==1.25.11
 psycopg2
-sentry-sdk==0.13.0
+sentry-sdk==0.14.0
