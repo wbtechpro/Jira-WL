@@ -9,3 +9,7 @@ urlpatterns = [
     path('jira-client-api-auth/', include('rest_framework.urls')),
     path('jira-client-api/', include('client.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+urlpatterns += [
+    path('sentry-debug', lambda request: 1 / 0),  # trigger error to check sentry
+]

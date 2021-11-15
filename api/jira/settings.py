@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -149,6 +152,11 @@ LOGGING = {
 }
 
 
+sentry_sdk.init(
+    dsn="https://57b1ef362ea1475e88927ce6eea18870@sentry.wbtech.pro/14",
+    integrations=[DjangoIntegration()]
+)
+
 
 #####################################################################
 
@@ -168,4 +176,3 @@ TO_PERCENT_ID_FOR_EXCLUDE = (   # Использовался в старых в�
     '557058:555ee601-6614-4cd0-9ecb-51538aad9ccd',
     '557058:3734ce03-2a43-4ecb-96fd-33351669413d',
 )
-
