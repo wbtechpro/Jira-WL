@@ -6,6 +6,10 @@ from client.models import WorklogWithInfo, IssuesInfo
 from client.serializers import WorklogSerializer, IssueSerializer
 
 
+class CharInFilter(filters.BaseInFilter, filters.CharFilter):  # фильтр на основе CVS для поиска нескольких тасков Жиры
+    pass
+
+
 class BaseWorklogWithInfoFilter(filters.FilterSet):
     updated_start_date = filters.DateTimeFilter(field_name="updated", lookup_expr='gte')
     updated_finish_date = filters.DateTimeFilter(field_name="updated", lookup_expr='lte')
@@ -20,9 +24,11 @@ class BaseWorklogWithInfoFilter(filters.FilterSet):
 
     issue__project = filters.CharFilter(field_name='issue__project')
 
+    issue__key = CharInFilter(field_name='issue__key', lookup_expr='in')  # фильтрация по названиям тасков Жиры
+
     class Meta:
         model = WorklogWithInfo
-        fields = ['updated', 'started', 'created', 'account_id', 'issue__project']
+        fields = ['updated', 'started', 'created', 'account_id', 'issue__project', 'issue__key']
 
 
 class BaseWorklogListView(generics.ListAPIView):
@@ -38,11 +44,5 @@ class BaseIssueListView(generics.ListAPIView):
     serializer_class = IssueSerializer
     http_method_names = ['get', 'head']
     filter_backends = [filters.DjangoFilterBackend]
-    filterset_fields = ['key',]
-
-
-
-
-
-
+    filterset_fields = ['key', ]
 

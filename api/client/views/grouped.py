@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 
 from client.views.base import BaseWorklogListView
-from client.models import FinologOrder, FinologProject
+from client.models import FinologOrder, FinologProject, WorklogWithInfo
 
 
 class WorklogSerializer(serializers.Serializer):
@@ -62,5 +62,40 @@ class GroupedByProjectWorklogView(BaseWorklogListView):
         ret_dict = {
             'all_logged_seconds': summed_hours,
             'grouped_worklogs': data
+        }
+        return ret_dict
+
+
+# Сериализатор и вью для группировки ворклогов по таскам Жиры
+
+class WorklogIssueSerializer(serializers.Serializer):
+
+    logged_time = serializers.IntegerField()
+    issue__agreed_order_finolog__finolog_id = serializers.CharField()
+
+    def to_representation(self, instance):
+        """
+        Отображает id заказа из Финолого и id таска из Жиры
+        вне зависимости от того, сформирован ли в Финологе заказ на этот таск или нет
+        """
+
+        # ID заказа Финолога и таска из Жиры
+        grouped_worklog = super().to_representation(instance)
+        finolog_id = grouped_worklog['issue__agreed_order_finolog__finolog_id']
+        jira_key = FinologOrder.objects.get(finolog_id=finolog_id).jira_key
+        grouped_worklog['issue__agreed_order_finolog__jira_key'] = jira_key
+
+        return grouped_worklog
+
+
+class GroupedByIssueWorklogView(GroupedByProjectWorklogView):
+
+    serializer_class = WorklogIssueSerializer
+
+    def _get_ret_dict(self, data):
+        summed_hours = sum([i['logged_time'] for i in data])
+        ret_dict = {
+            'all_logged_seconds': summed_hours,
+            'grouped_on_issues_worklogs': data
         }
         return ret_dict
