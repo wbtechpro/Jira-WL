@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 
 from client.views.base import BaseWorklogListView
-from client.models import FinologOrder, FinologProject, WorklogWithInfo
+from client.models import FinologOrder, FinologProject
 
 
 class WorklogSerializer(serializers.Serializer):
@@ -68,14 +68,11 @@ class GroupedByProjectWorklogView(BaseWorklogListView):
 
 # Сериализатор и вью для группировки ворклогов по таскам Жиры
 
-class WorklogIssueSerializer(serializers.Serializer):
-
-    logged_time = serializers.IntegerField()
-    issue__agreed_order_finolog__finolog_id = serializers.CharField()
+class WorklogIssueSerializer(WorklogSerializer):
 
     def to_representation(self, instance):
         """
-        Отображает id заказа из Финолого и id таска из Жиры
+        Отображает id заказа из Финолога и id таска из Жиры
         вне зависимости от того, сформирован ли в Финологе заказ на этот таск или нет
         """
 
@@ -84,6 +81,14 @@ class WorklogIssueSerializer(serializers.Serializer):
         finolog_id = grouped_worklog['issue__agreed_order_finolog__finolog_id']
         jira_key = FinologOrder.objects.get(finolog_id=finolog_id).jira_key
         grouped_worklog['issue__agreed_order_finolog__jira_key'] = jira_key
+
+        # Вставляем айдишники финолога
+        finolog_project_id = FinologProject.objects.filter(jira_key=grouped_worklog['issue__project']).first()
+        if finolog_project_id:
+            finolog_project_id = int(finolog_project_id.finolog_id)
+        else:
+            finolog_project_id = 0
+        grouped_worklog['issue__project_finolog_id'] = finolog_project_id
 
         return grouped_worklog
 
