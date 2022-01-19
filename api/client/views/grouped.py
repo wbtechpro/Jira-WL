@@ -68,7 +68,10 @@ class GroupedByProjectWorklogView(BaseWorklogListView):
 
 # Сериализатор и вью для группировки ворклогов по таскам Жиры
 
-class WorklogIssueSerializer(WorklogSerializer):
+class WorklogIssueSerializer(serializers.Serializer):
+
+    logged_time = serializers.IntegerField()
+    issue__agreed_order_finolog__finolog_id = serializers.CharField()
 
     def to_representation(self, instance):
         """
@@ -81,14 +84,6 @@ class WorklogIssueSerializer(WorklogSerializer):
         finolog_id = grouped_worklog['issue__agreed_order_finolog__finolog_id']
         jira_key = FinologOrder.objects.get(finolog_id=finolog_id).jira_key
         grouped_worklog['issue__agreed_order_finolog__jira_key'] = jira_key
-
-        # Вставляем айдишники финолога
-        finolog_project_id = FinologProject.objects.filter(jira_key=grouped_worklog['issue__project']).first()
-        if finolog_project_id:
-            finolog_project_id = int(finolog_project_id.finolog_id)
-        else:
-            finolog_project_id = 0
-        grouped_worklog['issue__project_finolog_id'] = finolog_project_id
 
         return grouped_worklog
 
