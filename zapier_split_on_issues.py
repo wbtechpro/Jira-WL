@@ -1,20 +1,20 @@
 # Скрипт для Запира на разбивку транзакций в Финологе по таскам, а не по периоду времени.
-# В Запире на вход подается словарь input_data. Здесь такое поведение эмулируется.
+# В Запире на вход подается словарь input. Здесь такое поведение эмулируется.
 # В словаре все значения - строки, поэтому при необходимости нужно явно делать приведения типов
 
 # На вход получаем айди человека, айди транзакции в Финологе, перечень тасков из Жиры через запятую
 
-input_data = {
-    'jira_account_id': '0000000000000',
-    'jira_issues': 'RANDOM-001, RANDOM-002, RANDOM-003',
-    'finolog_api_token': 'TwtkzIH15gt19MRF008d56e922fa945f33916e0f3ede7f107R1Gow6ua9MX8Mfi',
-    'finolog_transaction_id': '000000000',
-    'finolog_biz_id': '25467',
-    'order_type': 'out',  # хардкод
-    'contractor_id': '000000',  # это на вход дается, это число
-    'report_date': '2022-01-17',  # эта дата тоже на вход будет приходить
-    'category_id': '0',  # // это на вход дается, это число
-    'salary_per_hour': '500'}
+input = {
+    'jira_account_id': '0000000',  # Несуществующие данные
+    'jira_issues': 'RANDOM-001',  # Несуществующие данные
+    'finolog_api_token': 'TwtkzIH15gt19MRF008d56e922fa945f33916e0f3ede7f107R1Gow6ua9MX8Mfi',  # взято из старой сплитилки
+    'finolog_transaction_id': '000000',  # Несуществующие данные
+    'finolog_biz_id': '25467',# взято из старой сплитилки
+    'order_type': 'out',
+    'contractor_id': '00000',  # Несуществующие данные
+    'report_date': '2022-01-20 00:00:00',  # Несуществующие данные
+    'category_id': '0',
+    'salary_per_hour': '300'}
 
 import requests
 
@@ -23,8 +23,8 @@ JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
 JIRA_WORKLOGS_URI = 'jira-client-api/grouped-by-issues-worklogs/'
 JIRA_WORKLOGS_URL = f'https://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
 
-FINOLOG_TRANSACTION_INFO_URL = f'https://api.finolog.ru/v1/biz/{input_data["finolog_biz_id"]}/transaction/{input_data["finolog_transaction_id"]}'
-FINOLOG_SPLIT_URL = f'https://api.finolog.ru/v1/biz/{input_data["finolog_biz_id"]}/transaction/{input_data["finolog_transaction_id"]}/split'
+FINOLOG_TRANSACTION_INFO_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}'
+FINOLOG_SPLIT_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}/split'
 
 TRANSACTION_VALUE = None
 DATA_FOR_SPLIT = {'items': []}
@@ -35,8 +35,9 @@ ERROR_OUTPUT = None
 #####################################################
 # Получаем данные о ворклогах по таскам
 wl_params = {
-    'account_id': input_data['jira_account_id'],
-    'issues': input_data['jira_issues']}
+    'account_id': input['jira_account_id'],
+    'issues': input['jira_issues'],
+}
 wl_json = requests.get(JIRA_WORKLOGS_URL, params=wl_params).json()
 
 
@@ -69,7 +70,6 @@ if not ERROR_CODE:
             "category_id": int(input['category_id']),
             "contractor_id": int(input['contractor_id']),
         }
-
         order_id = worklog['issue__agreed_order_finolog__finolog_id']
         try:
             split_item['order_id'] = int(order_id)
@@ -82,7 +82,7 @@ if not ERROR_CODE:
 # Добавляем неразбитую часть, если нужна
 if not ERROR_CODE:
     split_sum = sum([i['value'] for i in DATA_FOR_SPLIT['items']])
-    if split_sum < TRANSACTION_VALUE:
+    if split_sum <= TRANSACTION_VALUE:
         DATA_FOR_SPLIT['items'].append({
             "value": TRANSACTION_VALUE - split_sum,
             "report_date": input['report_date'],
