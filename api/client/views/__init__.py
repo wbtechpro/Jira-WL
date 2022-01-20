@@ -1,5 +1,5 @@
 from client.views.base import BaseWorklogListView, BaseIssueListView
-from client.views.grouped import GroupedByProjectWorklogView
+from client.views.grouped import GroupedByProjectWorklogView, GroupedByIssueWorklogView
 from client.views.finolog_projects import FinologProjectViewSet
 
 __all__ = (
@@ -7,4 +7,5 @@ __all__ = (
     'BaseIssueListView',
     'GroupedByProjectWorklogView',
     'FinologProjectViewSet',
+    'GroupedByIssueWorklogView',
 )
