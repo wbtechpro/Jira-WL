@@ -45,4 +45,3 @@ class BaseIssueListView(generics.ListAPIView):
     http_method_names = ['get', 'head']
     filter_backends = [filters.DjangoFilterBackend]
     filterset_fields = ['key', ]
-
