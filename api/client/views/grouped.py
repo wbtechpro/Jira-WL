@@ -21,7 +21,8 @@ class WorklogSerializer(serializers.Serializer):
 
         # Вставляем жира ключи
         jira_key = ''
-        if grouped_worklog['issue__agreed_order_finolog__finolog_id'].isdigit():
+        if grouped_worklog['issue__agreed_order_finolog__finolog_id'] is not None \
+                and grouped_worklog['issue__agreed_order_finolog__finolog_id'].isdigit():
             finolog_id = grouped_worklog['issue__agreed_order_finolog__finolog_id']
             jira_key = FinologOrder.objects.get(finolog_id=finolog_id).jira_key
         grouped_worklog['issue__agreed_order_finolog__jira_key'] = jira_key
@@ -66,12 +67,14 @@ class GroupedByProjectWorklogView(BaseWorklogListView):
         return ret_dict
 
 
+
 # Сериализатор и вью для группировки ворклогов по таскам Жиры
 
 class WorklogIssueSerializer(serializers.Serializer):
 
     logged_time = serializers.IntegerField()
     issue__agreed_order_finolog__finolog_id = serializers.CharField()
+    issue__key = serializers.CharField()
 
     def to_representation(self, instance):
         """
@@ -79,11 +82,7 @@ class WorklogIssueSerializer(serializers.Serializer):
         вне зависимости от того, сформирован ли в Финологе заказ на этот таск или нет
         """
 
-        # ID заказа Финолога и таска из Жиры
         grouped_worklog = super().to_representation(instance)
-        finolog_id = grouped_worklog['issue__agreed_order_finolog__finolog_id']
-        jira_key = FinologOrder.objects.get(finolog_id=finolog_id).jira_key
-        grouped_worklog['issue__agreed_order_finolog__jira_key'] = jira_key
 
         return grouped_worklog
 

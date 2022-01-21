@@ -4,24 +4,24 @@
 
 # На вход получаем айди человека, айди транзакции в Финологе, перечень тасков из Жиры через запятую
 
-input = {
-    'jira_account_id': '0000000',  # Несуществующие данные
-    'jira_issues': 'RANDOM-001',  # Несуществующие данные
-    'finolog_api_token': 'TwtkzIH15gt19MRF008d56e922fa945f33916e0f3ede7f107R1Gow6ua9MX8Mfi',  # взято из старой сплитилки
-    'finolog_transaction_id': '000000',  # Несуществующие данные
-    'finolog_biz_id': '25467',# взято из старой сплитилки
+input = {  # данные словаря актуальны для тестовых БД и аккаунта в Финологе
+    'jira_account_id': '60ef306b2f97d50069fb69c5',
+    'jira_issues': 'LCLR-67',
+    'finolog_api_token': 'T1U8BsbhvQ7KZKuv65e8413eef430e0f372f28e6bfb9190f1rmdqUcMVv2tQxxO',
+    'finolog_transaction_id': '46231995',
+    'finolog_biz_id': '43976',
     'order_type': 'out',
-    'contractor_id': '00000',  # Несуществующие данные
-    'report_date': '2022-01-20 00:00:00',  # Несуществующие данные
-    'category_id': '0',
+    'contractor_id': '3407655',
+    'report_date': '2022-01-20 00:00:00',
+    'category_id': '4',
     'salary_per_hour': '300'}
 
 import requests
 
 # Константы
-JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
+JIRA_WORKLOGS_DOMAIN = 'jira-wl.lvh.me'
 JIRA_WORKLOGS_URI = 'jira-client-api/grouped-by-issues-worklogs/'
-JIRA_WORKLOGS_URL = f'https://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
+JIRA_WORKLOGS_URL = f'http://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
 
 FINOLOG_TRANSACTION_INFO_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}'
 FINOLOG_SPLIT_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}/split'
@@ -36,7 +36,7 @@ ERROR_OUTPUT = None
 # Получаем данные о ворклогах по таскам
 wl_params = {
     'account_id': input['jira_account_id'],
-    'issues': input['jira_issues'],
+    'issue__key': input['jira_issues'],
 }
 wl_json = requests.get(JIRA_WORKLOGS_URL, params=wl_params).json()
 
@@ -59,7 +59,6 @@ else:
     ERROR_CODE = 'error'
     ERROR_OUTPUT = 'Не удалось получить инфо о транзакции'
 
-
 #####################################################
 # Рассчитываем разбивку
 if not ERROR_CODE:
@@ -78,7 +77,6 @@ if not ERROR_CODE:
 
         DATA_FOR_SPLIT['items'].append(split_item)
 
-
 # Добавляем неразбитую часть, если нужна
 if not ERROR_CODE:
     split_sum = sum([i['value'] for i in DATA_FOR_SPLIT['items']])
@@ -92,7 +90,6 @@ if not ERROR_CODE:
     else:
         ERROR_CODE = 'error'
         ERROR_OUTPUT = 'Сумма <ворклоги*ставка> больше размера транзакции.'
-
 
 #####################################################
 # Делаем пост-запрос на разбивку

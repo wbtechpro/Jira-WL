@@ -11,6 +11,7 @@ class WorklogQuerySet(models.QuerySet):
         """
         query = self.values(
             # 'issue__agreed_order_key',
+            'issue__key',
             'issue__project',
             'issue__agreed_order_finolog__finolog_id',
             # 'issue__agreed_order_finolog__jira_key',
