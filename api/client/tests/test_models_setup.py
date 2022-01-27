@@ -2,7 +2,7 @@ from json import dumps, loads
 
 from rest_framework.test import APITestCase
 
-from client.models import IssuesInfo
+from client.models import IssuesInfo, FinologOrder, FinologProject
 
 
 class IssuesInfoTestsSetUp(APITestCase):
@@ -23,6 +23,23 @@ class IssuesInfoTestsSetUp(APITestCase):
 
         return super().setUp()
 
+    def tearDown(self):
+        return super().tearDown()
 
-def tearDown(self):
-    return super().tearDown()
+
+class FinologModelsTestsSetUp(APITestCase):
+    def setUp(self):
+        self.instance_data_0 = {'jira_key': 'RAND000', 'finolog_id': 0}
+        FinologOrder(**self.instance_data_0).save()
+        self.jira_finolog_tuples = [('RAND001', 1)]
+        self.instance_data_1 = loads(dumps({"self": "random.url/rand", "fields": {"summary": "random0",
+                                            "customfield_10376": [{"value": "Отправить"}]},
+                                            "key": "RAND001", "id": 1}))
+        IssuesInfo(json_data=self.instance_data_1).save()
+        self.instance_data_2 = {'jira_key': 'RAND', 'finolog_id': 222}
+        FinologProject(**self.instance_data_2).save()
+
+        return super().setUp()
+
+    def tearDown(self):
+        return super().tearDown()
