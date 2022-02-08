@@ -2,14 +2,18 @@ from json import dumps, loads
 
 from rest_framework.test import APITestCase
 
-from client.models import IssuesInfo, WorklogWithInfo
+from client.models import IssuesInfo, WorklogWithInfo, FinologOrder, FinologProject
 
 
 class ViewsAndSerializersTestSetUp(APITestCase):
 
     def setUp(self):
-        # Issues data
+        # ISSUES DATA
+
+        # URLs
         self.base_issues_view = 'https://jira-wl.wbtech.pro/jira-client-api/issues/'
+
+        # Model instances
         self.issue_data = loads(dumps({"self": "random.url/test",
                                        "fields": {"summary": "test", "customfield_10100": 'TEST-123'},
                                        "key": "test-123", "id": "01"}))
@@ -23,12 +27,16 @@ class ViewsAndSerializersTestSetUp(APITestCase):
                                                          "key": "add_test-234", "id": "03"}))
         IssuesInfo(json_data=self.issue_data_for_filter_test_2).save()
 
+        # Model fields
         self.test_data_issue_fields = ['id', 'url', 'summary', 'project', 'key', 'jira_id', 'agreed_order_key',
                                        'agreed_order_finolog']
 
-        # Worklogs data
+        # WORKLOGS DATA
+
+        # URLs
         self.base_worklogs_view = 'http://jira-wl.lvh.me/jira-client-api/worklogs/'
 
+        # Model instances
         self.worklog_data = loads(dumps({"author": {"displayName": "Random Randomovich", "accountId": "0"},
                                          "self": "random.url/zero", "created": "2022-01-01 10:00:00",
                                          "updated": "2022-01-01 10:00:00", "started": "2022-01-01 09:00:00",
@@ -46,8 +54,20 @@ class ViewsAndSerializersTestSetUp(APITestCase):
                    "updated": "2022-01-01 10:00:00", "started": "2022-01-01 09:00:00",
                    "timeSpentSeconds": 3600, "timeSpent": "1h", "id": "03", "issueId": "03"}))
         WorklogWithInfo(json_data=self.worklog_data_for_filters_test_2).save()
+
+        # Model fields
         self.test_data_worklog_fields = ['id', 'url', 'display_name', 'account_id', 'created', 'updated', 'started',
                                          'time_spent_seconds', 'time_spent', 'jira_id', 'issueId', 'issue']
+
+        # GROUPED WORKLOGS DATA
+
+        # URLs
+        self.grouped_by_projects_worklogs_view = 'http://jira-wl.lvh.me/jira-client-api/grouped-worklogs/'
+        self.grouped_by_issues_worklogs_view = 'http://jira-wl.lvh.me/jira-client-api/grouped-by-issues-worklogs/'
+
+        # Model instances
+        FinologOrder.save_from_jira_finolog_tuples([('TEST-234', 3)])
+        FinologProject(**{'jira_key': 'add_test', 'finolog_id': '3'}).save()
 
         return super().setUp()
 
