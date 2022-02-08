@@ -62,16 +62,6 @@ class WorklogWithInfoTestsSetUp(APITestCase):
                                             "updated": "2022-01-01 10:00:00", "started": "2022-01-01 09:00:00",
                                             "timeSpentSeconds": 3600, "timeSpent": "1h", "id": "02", "issueId": "02"}))
         WorklogWithInfo(json_data=self.instance_data_2).save()
-        # self.instance_data_1 = loads(dumps({"self": "random.url/one", "fields": {"summary": "random1"},
-        #                                     "key": "random1", "id": 1, "agreed_order_key": "mot_agreed_order"}))
-        # IssuesInfo(json_data=self.instance_data_1).save()
-        # self.instance_data_2 = loads(dumps({"self": "random.url/test",
-        #                                     "fields": {"summary": "test",
-        #                                                "customfield_10376": [{"value": "Отправить"}]},
-        #                                     "key": "test-123", "id": 1}))
-        # self.instance_data_3 = loads(dumps({"self": "random.url/test",
-        #                                     "fields": {"summary": "test", "customfield_10100": 'TEST-123'},
-        #                                     "key": "test-123", "id": 1}))
 
         return super().setUp()
 
