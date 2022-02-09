@@ -20,7 +20,7 @@ class IssueModelTest(WorklogWithInfoTestsSetUp):
     def test_worklogs_filtered_by_account_id(self):
         """
         Проверяет, действительно функция by_jira_account_id фильтрует ворклоги по id пользователя
-        Для теста в модель добавлены один воркглог пользователя с id 0 и два ворклога пользователя с id 1
+        Для теста в БД добавлены один воркглог пользователя с id 0 и два ворклога пользователя с id 1
         """
         model_data_0 = WorklogWithInfo.objects.filter(account_id='0')
         model_data_1 = WorklogWithInfo.objects.filter(account_id='1')

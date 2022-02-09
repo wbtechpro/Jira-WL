@@ -10,7 +10,7 @@ class IssueModelTest(IssuesInfoTestsSetUp):
         """
         Проверяет, действительно ли менеджер IssueQuerySet возвращает данные модели IssuesInfo с уникальным значением
         agreed_order_key.
-        Для теста в модель IssuesInfo добавлены два таска с несогласованными заказами ("not_agreed_order")
+        Для теста в БД IssuesInfo добавлены два таска с несогласованными заказами ("not_agreed_order")
         """
         model_data = IssuesInfo.objects.values('agreed_order_key')
         model_data_unique_orders = model_data.distinct('agreed_order_key')
