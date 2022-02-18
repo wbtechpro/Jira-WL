@@ -1,0 +1,14 @@
+{% extends "admin/base_site.html" %}
+{% block title %}
+    Worklogs Download Period
+{% endblock %}
+{% block content %}
+    <h1>{{"Пожалуйста, укажите период, за который необходимо загрузить ворклоги"}}</h1>
+    <br>
+    <form action="?" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <div class="form-error">{{ form.non_field_errors }}</div>
+        <button type="submit">Отправить</button>
+    </form>
+{% endblock %}

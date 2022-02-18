@@ -1,6 +1,7 @@
 from client.models.worklog import WorklogWithInfo
 from client.models.issue import IssuesInfo
 from client.models.finolog import FinologApiToken, FinologOrder, FinologProject
+from client.models.proxy_model import ProxyModel
 
 
 __all__ = (
@@ -9,4 +10,5 @@ __all__ = (
     'FinologApiToken',
     'FinologOrder',
     'FinologProject',
+    'ProxyModel'
 )
