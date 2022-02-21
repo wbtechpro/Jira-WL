@@ -20,8 +20,11 @@ class WorklogsDownloadPeriodForm(forms.Form):
 
     def clean_period_in_days(self):
         days = self.cleaned_data['period_in_days']
-        if days > period_in_days_does_not_exceed_3_months():
-            raise forms.ValidationError(f'Введенное вами количество дней превышает лимит в последние три месяца. '
-                                        f'Пожалуйста, введите количеств'
-                                        f'о дней, не превышающее {period_in_days_does_not_exceed_3_months()}.')
-        return days
+        if days is not None:
+            if days > period_in_days_does_not_exceed_3_months():
+                raise forms.ValidationError(f'Введенное вами количество дней превышает лимит в последние три месяца. '
+                                            f'Пожалуйста, введите количеств'
+                                            f'о дней, не превышающее {period_in_days_does_not_exceed_3_months()}.')
+            return days
+        else:
+            return days
