@@ -43,7 +43,6 @@ class WorklogsDownloadPeriodAdmin(admin.ModelAdmin):
         except DaysForDownloadModel.DoesNotExist:
             days_for_template = None
 
-        initial_data = {'period_in_days':  DaysForDownloadModel.objects.get(pk=1).days}
         if request.method == 'POST':
             form = WorklogsDownloadPeriodForm(request.POST, initial={'period_in_days': days_for_template})
             if form.is_valid():
