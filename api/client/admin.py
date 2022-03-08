@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import path
 
 from client.models import WorklogWithInfo, IssuesInfo, FinologApiToken, FinologOrder, FinologProject,\
-    DaysForDownloadModel
+    PeriodForDownloadModel
 from client.forms import WorklogsDownloadPeriodForm
 
 
@@ -32,25 +32,35 @@ class FinologProjectAdmin(admin.ModelAdmin):
     list_display = ('jira_key', 'finolog_id',)
 
 
-# ДОБАВЛЕНИЕ В АДМИН-ПАНЕЛЬ ВОЗМОЖНОСТИ УКАЗАНИЯ КОЛИЧЕСТВА ДНЕЙ, ЗА КОТОРОЕ НЕОБХОДИМО ЗАГРУЗИТЬ ВОРКЛОГИ
+# ДОБАВЛЕНИЕ В АДМИН-ПАНЕЛЬ ВОЗМОЖНОСТИ УКАЗАНИЯ КОЛИЧЕСТВА ДНЕЙ, ЗА КОТОРОЕ НЕОБХОДИМО ЗАГРУЗИТЬ ВОРКЛОГИ,
+# И СТАРТОВОЙ ДАТЫ ОТСЧЕТА
 
 class WorklogsDownloadPeriodAdmin(admin.ModelAdmin):
-    model = DaysForDownloadModel
+    model = PeriodForDownloadModel
 
     def post_download_period_in_days_via_admin(self, request):
         try:
-            days_for_template = DaysForDownloadModel.objects.get(pk=1).days
-        except DaysForDownloadModel.DoesNotExist:
+            days_for_template = PeriodForDownloadModel.objects.get(pk=1).days
+        except PeriodForDownloadModel.DoesNotExist:
             days_for_template = None
 
+        try:
+            start_date_for_template = PeriodForDownloadModel.objects.get(pk=1).start_date
+        except PeriodForDownloadModel.DoesNotExist:
+            start_date_for_template = None
+
         if request.method == 'POST':
-            form = WorklogsDownloadPeriodForm(request.POST, initial={'period_in_days': days_for_template})
+            form = WorklogsDownloadPeriodForm(request.POST, initial={'period_in_days': days_for_template,
+                                                                     'start_date': start_date_for_template})
             if form.is_valid():
-                days, created = DaysForDownloadModel.objects.update_or_create(
+                days, created = PeriodForDownloadModel.objects.update_or_create(
                     pk=1, defaults={'days': form.cleaned_data['period_in_days']})
+                start_date, created = PeriodForDownloadModel.objects.update_or_create(
+                    pk=1, defaults={'start_date': form.cleaned_data['start_date']})
                 messages.success(request, 'Form submission successful')
         else:
-            form = WorklogsDownloadPeriodForm(initial={'period_in_days': days_for_template})
+            form = WorklogsDownloadPeriodForm(initial={'period_in_days': days_for_template,
+                                                       'start_date': start_date_for_template})
 
         return render(request, 'admin/custom_admin_template.html', {'form': form})
 
@@ -61,4 +71,4 @@ class WorklogsDownloadPeriodAdmin(admin.ModelAdmin):
         ]
 
 
-admin.site.register(DaysForDownloadModel, WorklogsDownloadPeriodAdmin)
+admin.site.register(PeriodForDownloadModel, WorklogsDownloadPeriodAdmin)
