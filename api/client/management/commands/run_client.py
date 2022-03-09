@@ -19,10 +19,10 @@ class Command(BaseCommand):
     help = 'Запускает Jira клиента'
 
     # Для того, чтобы передать аргументы команде run_client вручную, необходимо указать --start-date и/или --days_before
-    # соответствнно. Это сделано для того, чтобы аргументы не были позиционными и чтобы можно было комбинировать
+    # соответственно. Это сделано для того, чтобы аргументы не были позиционными и чтобы можно было комбинировать
     # значения, введенные вручную, со значениями из админки
     def add_arguments(self, parser):
-        parser.add_argument('--start_date', nargs='?', type=str, default=None)  # дату необходимо вводить в формате YYYY-MM-DD
+        parser.add_argument('--start_date', nargs='?', type=str, default=None)  # дату надо вводить в формате YYYY-MM-DD
         parser.add_argument('--days_before', nargs='?', type=int, default=None)
 
     def handle(self, *args, **options):
