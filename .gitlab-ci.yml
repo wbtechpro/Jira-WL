@@ -21,4 +21,4 @@ build:
   script:
     - docker-compose pull || true
     - docker-compose build
-    - docker-compose push docker.wbtech.pro
+    - docker-compose push
