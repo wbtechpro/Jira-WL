@@ -1,11 +1,22 @@
 stages:
-  #- build
-  - test
+  - build
+  #- test
   #- deploy
 
-test:feature:
-  stage: test
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+
+build:
+  stage: build
   only:
-    - /^feature/.+$/
+    - dev
+    - master
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
   script:
-    - docker-compose run api python manage.py test
+    - docker-compose pull || true
+    - docker-compose build
+    - docker-compose push
