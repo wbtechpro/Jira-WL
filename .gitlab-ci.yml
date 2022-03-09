@@ -45,7 +45,7 @@ test:feature:
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
-    script:
+  script:
     - docker-compose pull || true
     - docker-compose run api python manage.py test
     - docker-compose stop
