@@ -9,8 +9,9 @@ before_script:
 build:
   stage: build
   only:
-    - dev
-    - master
+    #- dev
+    #- master
+    - /^feature/.+$/
   services:
     - docker:dind
   variables:
