@@ -112,8 +112,8 @@ def jira_string_time_to_unix_timestamp(stringtime):
     return int(time.mktime(date_time.timetuple())) * 1000
 
 
-def get_unix_time_n_days_before_now(n):
-    now = datetime.now()
-    start_of_prev_month = now - timedelta(days=n)
-    start_of_prev_month = int(time.mktime(start_of_prev_month.timetuple())) * 1000
-    return start_of_prev_month
+def get_unix_time_n_days_before_date(n, start_date):
+    end_date = start_date - timedelta(days=n)
+    end_date_unix = int(time.mktime(end_date.timetuple())) * 1000
+    start_date_unix = int(time.mktime(start_date.timetuple())) * 1000
+    return end_date_unix, start_date_unix

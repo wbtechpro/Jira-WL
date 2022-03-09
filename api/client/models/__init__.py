@@ -1,7 +1,7 @@
 from client.models.worklog import WorklogWithInfo
 from client.models.issue import IssuesInfo
 from client.models.finolog import FinologApiToken, FinologOrder, FinologProject
-from client.models.days_for_download_model import DaysForDownloadModel
+from client.models.period_for_download_model import PeriodForDownloadModel
 
 
 __all__ = (
@@ -10,5 +10,5 @@ __all__ = (
     'FinologApiToken',
     'FinologOrder',
     'FinologProject',
-    'DaysForDownloadModel'
+    'PeriodForDownloadModel'
 )
