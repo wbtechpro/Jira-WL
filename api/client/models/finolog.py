@@ -50,7 +50,7 @@ class FinologProject(models.Model):
     Есть джанго комманда для загрузки дефолтных
     """
 
-    jira_key = models.CharField(max_length=50, unique=True)
+    jira_key = models.CharField(max_length=50)
     finolog_id = models.CharField(max_length=50)
 
     class Meta:
