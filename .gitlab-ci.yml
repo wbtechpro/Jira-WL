@@ -22,7 +22,7 @@ build:
     - docker-compose build
     - docker-compose push
   
- test:
+test:
   stage: test
   only:
     - main
@@ -36,16 +36,16 @@ build:
     - docker-compose run api python manage.py test
     - docker-compose stop
 
-  test:feature:
-    stage: test
-    only:
-      - /^feature/.+$/
-    services:
-      - docker:dind
-    variables:
-      DOCKER_HOST: tcp://docker:2375
-      DOCKER_DRIVER: overlay2
-      script:
-      - docker-compose pull || true
-      - docker-compose run api python manage.py test
-      - docker-compose stop
+test:feature:
+  stage: test
+  only:
+    - /^feature/.+$/
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    script:
+    - docker-compose pull || true
+    - docker-compose run api python manage.py test
+    - docker-compose stop
