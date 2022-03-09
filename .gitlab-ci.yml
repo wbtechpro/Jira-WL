@@ -1,0 +1,11 @@
+stages:
+  #- build
+  - test
+  #- deploy
+
+test:feature:
+  stage: test
+  only:
+    - /^feature/.+$/
+  script:
+    - docker-compose run api python manage.py test
