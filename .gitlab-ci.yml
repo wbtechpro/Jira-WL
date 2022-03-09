@@ -9,8 +9,6 @@ before_script:
 build:
   stage: build
   only:
-    #- dev
-    #- master
     - main
   services:
     - docker:dind
