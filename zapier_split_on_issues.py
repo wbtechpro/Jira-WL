@@ -5,23 +5,23 @@
 # На вход получаем айди человека, айди транзакции в Финологе, перечень тасков из Жиры через запятую
 
 input = {  # данные словаря актуальны для тестовых БД и аккаунта в Финологе
-    'jira_account_id': '60ef306b2f97d50069fb69c5',
-    'jira_issues': 'LCLR-67',
-    'finolog_api_token': 'T1U8BsbhvQ7KZKuv65e8413eef430e0f372f28e6bfb9190f1rmdqUcMVv2tQxxO',
-    'finolog_transaction_id': '46231995',
-    'finolog_biz_id': '43976',
+    'jira_account_id': '600ab3c3dfb0c7006940d2f1',
+    'jira_issues': 'NOVA-338, NOVA-339, NOVA-341',
+    'finolog_api_token': 'ez6bwR6oH7Yw5uVi62ebb1a2914e3916796e3eaa959ebcd2wYeD5PBrq6o5Vl4c',
+    'finolog_transaction_id': '48065915',
+    'finolog_biz_id': '45040',
     'order_type': 'out',
-    'contractor_id': '3407655',
-    'report_date': '2022-01-20 00:00:00',
-    'category_id': '4',
-    'salary_per_hour': '300'}
+    'contractor_id': '3518260',
+    'report_date': '2022-03-22 00:00:00',
+    'category_id': '861972',
+    'salary_per_hour': '32'}
 
 import requests
 
 # Константы
-JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
+JIRA_WORKLOGS_DOMAIN = 'jira-wl.lvh.me'
 JIRA_WORKLOGS_URI = 'jira-client-api/grouped-by-issues-worklogs/'
-JIRA_WORKLOGS_URL = f'https://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
+JIRA_WORKLOGS_URL = f'http://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
 
 FINOLOG_TRANSACTION_INFO_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}'
 FINOLOG_SPLIT_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}/split'
@@ -62,7 +62,21 @@ else:
 #####################################################
 # Рассчитываем разбивку
 if not ERROR_CODE:
-    for worklog in wl_json['grouped_on_issues_worklogs']:
+    worklogs_without_finolog_orders = {'logged_time': 0,
+                                       'issue__agreed_order_finolog__finolog_id': 'не удалось найти id заказа в финологе',
+                                       'issue__key': []}  # словарь, куда будут отнесены все таски без заказа в Финологе
+    worklogs_for_split = []  # список со словарями, куда будут отнесены все таски с заказом в Финологе
+
+    for worklog in wl_json['grouped_on_issues_worklogs']:  # проверка на то, сформирован ли на таск заказ в Финологе
+        if worklog['issue__agreed_order_finolog__finolog_id'] == 'не удалось найти id заказа в финологе':
+            worklogs_without_finolog_orders['logged_time'] += worklog['logged_time']
+            worklogs_without_finolog_orders['issue__key'].append(worklog['issue__key'])
+        else:
+            worklogs_for_split.append(worklog)
+
+    worklogs_for_split.append(worklogs_without_finolog_orders)  # объединяем два списка в один
+
+    for worklog in worklogs_for_split:
         split_item = {
             "value": int(int(worklog['logged_time']) / 60 / 60 * int(input['salary_per_hour'])),
             "report_date": input['report_date'],
@@ -74,7 +88,6 @@ if not ERROR_CODE:
             split_item['order_id'] = int(order_id)
         except ValueError:
             pass
-
         DATA_FOR_SPLIT['items'].append(split_item)
 
 # Добавляем неразбитую часть, если нужна
@@ -109,7 +122,6 @@ if not ERROR_CODE:
     if not finolog_response.status_code == 200:
         ERROR_CODE = 'error'
         ERROR_OUTPUT = '{}. Код {}'.format(finolog_response.json(), finolog_response.status_code)
-
 
 output = {}
 if ERROR_CODE:
