@@ -24,15 +24,14 @@ class JiraClient:
     JIRA_API_V3_URI = '/rest/api/3'
 
     def __init__(
-            self, username: str = None, api_token: str = None, since_timestamp: int = None, end_date: int = None,
-            start_date: int = None, jira_server_url: str = None, jira_api_uri: str = None):
+            self, username: str = None, api_token: str = None, start_date: int = None,
+            end_date: int = None, jira_server_url: str = None, jira_api_uri: str = None):
         self._jira_server_url = jira_server_url or self.JIRA_SERVER_URL
         self._jira_api_uri = jira_api_uri or self.JIRA_API_V3_URI
         self.base_url = "{}{}".format(self._jira_server_url, self._jira_api_uri)
         self.auth = HTTPBasicAuth(username, api_token)
-        # self.since_timestamp = since_timestamp or get_unix_time_of_prev_month_start()
-        self.end_date = end_date or get_unix_time_of_prev_month_start()
         self.start_date = start_date or get_unix_time_of_prev_month_start()
+        self.end_date = end_date or get_unix_time_of_prev_month_start()
 
     def get_updated_worklogs(self) -> [int]:
         """
@@ -44,7 +43,7 @@ class JiraClient:
         url = self.base_url + '/worklog/updated'
         headers = {"Accept": "application/json"}
 
-        params = {'since': self.end_date}
+        params = {'since': self.start_date}
         updated_worklog_ids_1 = list()
         response_json = requests.get(url, params=params, headers=headers, auth=self.auth).json()
         updated_worklog_ids_1.extend(self._get_updated_worklogs_ids(response_json))
@@ -53,7 +52,7 @@ class JiraClient:
                 response_json['nextPage'], params=params, headers=headers, auth=self.auth).json()
             updated_worklog_ids_1.extend(self._get_updated_worklogs_ids(response_json))
 
-        params = {'since': self.start_date}
+        params = {'since': self.end_date}
         updated_worklog_ids_2 = list()
         response_json = requests.get(url, params=params, headers=headers, auth=self.auth).json()
         updated_worklog_ids_2.extend(self._get_updated_worklogs_ids(response_json))

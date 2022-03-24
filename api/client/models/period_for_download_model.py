@@ -2,7 +2,7 @@ from django.db import models
 
 
 class PeriodForDownloadModel(models.Model):
-    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     days = models.IntegerField(null=True, blank=True)
 
     class Meta:
