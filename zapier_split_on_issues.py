@@ -19,9 +19,9 @@ input = {  # данные словаря актуальны для тестов�
 import requests
 
 # Константы
-JIRA_WORKLOGS_DOMAIN = 'jira-wl.lvh.me'
+JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
 JIRA_WORKLOGS_URI = 'jira-client-api/grouped-by-issues-worklogs/'
-JIRA_WORKLOGS_URL = f'http://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
+JIRA_WORKLOGS_URL = f'https://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
 
 FINOLOG_TRANSACTION_INFO_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}'
 FINOLOG_SPLIT_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}/split'

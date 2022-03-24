@@ -3,38 +3,6 @@
 # В словаре все значения - строки, поэтому, при необходимости нужно явно делать приведения типов
 
 # На вход получаем айди человека, айди транзакции в финологе, даты от-до
-input = {
-    "jira_account_id": '5c671f9dcefe97640e69ba86',
-    'date_from': '2021-04-01T00:00',  # Дата начала
-    'date_to': '2021-04-30T23:59',  # Дата конца
-
-    'finolog_api_token': 'TwtkzIH15gt19MRF008d56e922fa945f33916e0f3ede7f107R1Gow6ua9MX8Mfi',
-
-    'finolog_transaction_id': '37356872',
-    'finolog_biz_id': '25467',
-    # token
-
-    'order_type': 'out',  # хардкод
-    'contractor_id': '1947878',  # это на вход дается, это число
-    'report_date': '2021-04-27',  # эта дата тоже на вход будет приходить
-    'category_id': '4',  # // это на вход дается, это число
-
-    'salary_per_hour': '500',
-}
-
-input = {
-    'jira_account_id':	'5c7c16f4fcc669199642c0ea',
-    'date_from':	'2021-04-01T00:00',
-    'date_to':	'2021-04-30T23:59',
-    'finolog_api_token':	'TwtkzIH15gt19MRF008d56e922fa945f33916e0f3ede7f107R1Gow6ua9MX8Mfi',
-    'finolog_transaction_id':	'36677058',
-    'finolog_biz_id':	'25467',
-    'order_type':	'out',
-    'contractor_id':	'1908022',
-    'category_id':	'321283',
-    'salary_per_hour':	'394',
-    'report_date':	'2021-04-27 00:00:00',
-}
 
 input = {  # данные словаря актуальны для тестовых БД и аккаунта в Финологе
     'jira_account_id': '600ab3c3dfb0c7006940d2f1',
@@ -52,9 +20,9 @@ input = {  # данные словаря актуальны для тестов�
 import requests
 
 # Константы
-JIRA_WORKLOGS_DOMAIN = 'jira-wl.lvh.me'
+JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
 JIRA_WORKLOGS_URI = 'jira-client-api/grouped-worklogs'
-JIRA_WORKLOGS_URL = f'http://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
+JIRA_WORKLOGS_URL = f'https://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
 
 FINOLOG_TRANSACTION_INFO_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}'
 FINOLOG_SPLIT_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}/split'
