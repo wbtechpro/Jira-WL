@@ -27,7 +27,7 @@ input = {  # данные словаря актуальны для тестов�
 import requests
 
 # Константы
-JIRA_WORKLOGS_DOMAIN = 'jira-wl.lvh.me'
+JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
 
 # ЕСЛИ РАЗБИВАЕМ ПО ПЕРИОДУ ВРЕМЕНИ
 if input['jira_issues'] == 'null' and input['date_from'] != 'null' and input['date_to'] != 'null':
@@ -36,7 +36,7 @@ if input['jira_issues'] == 'null' and input['date_from'] != 'null' and input['da
 elif input['date_from'] == 'null' and input['date_to'] == 'null' and input['jira_issues'] != 'nul':
     JIRA_WORKLOGS_URI = 'jira-client-api/grouped-by-issues-worklogs/'
 
-JIRA_WORKLOGS_URL = f'http://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
+JIRA_WORKLOGS_URL = f'https://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
 
 FINOLOG_TRANSACTION_INFO_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}'
 FINOLOG_SPLIT_URL = f'https://api.finolog.ru/v1/biz/{input["finolog_biz_id"]}/transaction/{input["finolog_transaction_id"]}/split'
