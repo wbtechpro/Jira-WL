@@ -15,25 +15,25 @@ server {
 }
 
 
-#server {
-    #listen 443 default_server ssl http2;
-    #listen [::]:443 ssl http2;
+server {
+    listen 443 default_server ssl http2;
+    listen [::]:443 ssl http2;
 
-    #server_name ${SERVER_NAME};
+    server_name ${SERVER_NAME};
 
-    #ssl_certificate /etc/nginx/ssl/live/${SERVER_NAME}/fullchain.pem;
-    #ssl_certificate_key /etc/nginx/ssl/live/${SERVER_NAME}/privkey.pem;
+    ssl_certificate /etc/nginx/ssl/live/${SERVER_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/live/${SERVER_NAME}/privkey.pem;
     
-    #location / {
-        #try_files ${DOLLAR}uri ${DOLLAR}uri/index.html @uwsgi;
-        #add_header X-Content-Type-Options nosniff;
-        #client_max_body_size 32m;
-    #}
+    location / {
+        try_files ${DOLLAR}uri ${DOLLAR}uri/index.html @uwsgi;
+        add_header X-Content-Type-Options nosniff;
+        client_max_body_size 32m;
+    }
 
-    #location @uwsgi {
-        #include uwsgi_params;
-        #uwsgi_pass                  ${DJANGO_HOST}:${DJANGO_PORT};
-        #proxy_set_header            Host ${DOLLAR}host;
-        #proxy_set_header            X-Real-IP ${DOLLAR}remote_addr;
-    #}
-#}
+    location @uwsgi {
+        include uwsgi_params;
+        uwsgi_pass                  ${DJANGO_HOST}:${DJANGO_PORT};
+        proxy_set_header            Host ${DOLLAR}host;
+        proxy_set_header            X-Real-IP ${DOLLAR}remote_addr;
+    }
+}
