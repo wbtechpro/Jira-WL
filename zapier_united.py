@@ -33,7 +33,7 @@ JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
 if input['jira_issues'] == 'null' and input['date_from'] != 'null' and input['date_to'] != 'null':
     JIRA_WORKLOGS_URI = 'jira-client-api/grouped-worklogs'
 # ЕСЛИ РАЗБИВАЕМ ПО ТАСКАМ
-elif input['date_from'] == 'null' and input['date_to'] == 'null' and input['jira_issues'] != 'nul':
+elif input['date_from'] == 'null' and input['date_to'] == 'null' and input['jira_issues'] != 'null':
     JIRA_WORKLOGS_URI = 'jira-client-api/grouped-by-issues-worklogs/'
 
 JIRA_WORKLOGS_URL = f'https://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
