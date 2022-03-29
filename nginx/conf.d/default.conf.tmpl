@@ -5,6 +5,26 @@ server {
 
     root /usr/src/webroot;
 
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://${SERVER_NAME}$request_uri;
+    }
+
+}
+
+
+server {
+    listen 443 default_server ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name ${SERVER_NAME};
+
+    ssl_certificate /etc/nginx/ssl/live/${SERVER_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/live/${SERVER_NAME}/privkey.pem;
+    
     location / {
         try_files ${DOLLAR}uri ${DOLLAR}uri/index.html @uwsgi;
         add_header X-Content-Type-Options nosniff;
@@ -17,7 +37,4 @@ server {
         proxy_set_header            Host ${DOLLAR}host;
         proxy_set_header            X-Real-IP ${DOLLAR}remote_addr;
     }
-
 }
-
-

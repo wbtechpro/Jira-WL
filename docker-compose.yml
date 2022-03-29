@@ -48,8 +48,14 @@ services:
       - api
     volumes_from:
       - api
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certbot/www:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl/:ro
     ports:
-      - "80:80"
+      - 80:80
+      - 443:443
+    restart: always
     environment:
       DOLLAR: "$$"
       SERVER_NAME: ${SERVER_NAME}
@@ -60,6 +66,12 @@ services:
         envsubst < /etc/nginx/conf.d/default.conf.tmpl > /etc/nginx/conf.d/default.conf &&
         exec nginx -g 'daemon off;'
       "
+  
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
 
 volumes:
   db:
