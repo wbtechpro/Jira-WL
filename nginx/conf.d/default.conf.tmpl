@@ -21,6 +21,8 @@ server {
 
     server_name ${SERVER_NAME};
 
+    root /usr/src/webroot;
+
     ssl_certificate /etc/nginx/ssl/live/${SERVER_NAME}/fullchain.pem;
     ssl_certificate_key /etc/nginx/ssl/live/${SERVER_NAME}/privkey.pem;
     
