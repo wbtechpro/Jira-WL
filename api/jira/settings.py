@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-#fr$i2rm&c+&1gs9#l(^+%%dngq67+41d6sogvxy-a8%r94_h0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DEBUG'))
 
-ALLOWED_HOSTS = ['jira-wl.wbtech.pro', 'localhost', 'jira-wl.lvh.me']
+ALLOWED_HOSTS = [os.environ.get('SERVER_NAME', 'jira-wl.lvh.me')]
 
 
 # Application definition
