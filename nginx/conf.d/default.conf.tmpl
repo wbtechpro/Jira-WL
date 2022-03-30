@@ -9,7 +9,7 @@ server {
     }
 
     location / {
-        return 301 https://$http_host$request_uri;
+        return 301 https://${DOLLAR}host${DOLLAR}uri;
     }
 
 }
