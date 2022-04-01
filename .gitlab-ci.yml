@@ -63,7 +63,7 @@ deploy:prod:
     DOCKER_TLS_VERIFY: '1'
     DOCKER_HOST: 'tcp://$SERVER_IP:2376'
     DOCKER_CERT_PATH: '/certs/${CI_PROJECT_PATH_SLUG}-prod/'
-    SERVER_NAME: '${SERVER_NAME}'
+    SERVER_NAME: '$SERVER_NAME'
   script:
     - docker-compose pull
     - docker-compose up -d -V
