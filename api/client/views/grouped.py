@@ -39,9 +39,13 @@ class WorklogSerializer(serializers.Serializer):
         category = FinologProject.objects.filter(jira_key=grouped_worklog['issue__project']).first()
         if category:
             if category.category_id.isdigit():
-                grouped_worklog['issue__project__category_id'] = int(category.category_id)
+               category = category.category_id
+            else:
+               category = 'Статья расходов не указана'
         else:
-            grouped_worklog['issue__project__category_id'] = 'Статья расходов не указана'
+            category = 'Статья расходов не указана'
+
+        grouped_worklog['issue__project_category_id'] = category
 
         return grouped_worklog
 
@@ -102,9 +106,13 @@ class WorklogIssueSerializer(serializers.Serializer):
         category = FinologProject.objects.filter(jira_key=grouped_worklog['issue__project']).first()
         if category:
             if category.category_id.isdigit():
-                grouped_worklog['issue__project__category_id'] = int(category.category_id)
+                category = category.category_id
+            else:
+                category = 'Статья расходов не указана'
         else:
-            grouped_worklog['issue__project__category_id'] = 'Статья расходов не указана'
+            category = 'Статья расходов не указана'
+
+        grouped_worklog['issue__project_category_id'] = category
 
         return grouped_worklog
 

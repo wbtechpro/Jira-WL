@@ -67,7 +67,7 @@ if not ERROR_CODE:
                                        'issue__key': []}  # словарь, куда будут отнесены все таски без заказа в Финологе
     worklogs_for_split = []  # список со словарями, куда будут отнесены все таски с заказом в Финологе
 
-    for worklog in wl_json['grouped_on_issues_worklogs']:  # проверка на то, сформирован ли на таск заказ в Финологе
+    for worklog in wl_json['grouped_worklogs']:  # проверка на то, сформирован ли на таск заказ в Финологе
         if worklog['issue__agreed_order_finolog__finolog_id'] == 'не удалось найти id заказа в финологе':
             worklogs_without_finolog_orders['logged_time'] += worklog['logged_time']
             worklogs_without_finolog_orders['issue__key'].append(worklog['issue__key'])

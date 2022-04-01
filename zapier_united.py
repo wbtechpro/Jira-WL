@@ -113,7 +113,7 @@ if not ERROR_CODE:
             worklogs_for_split[-1]['issue__project'] = worklog['issue__project']
             worklogs_for_split[-1]['issue__agreed_order_finolog__finolog_id'] = \
                 worklog['issue__agreed_order_finolog__finolog_id']
-            worklogs_for_split[-1]['issue__project__category_id'] = worklog['issue__project__category_id']
+            worklogs_for_split[-1]['issue__project_category_id'] = worklog['issue__project_category_id']
             worklogs_for_split[-1]['issue__project_finolog_id'] = worklog['issue__project_finolog_id']
             # ЕСЛИ РАЗБИВАЕМ ПО ТАСКАМ
             if JIRA_WORKLOGS_URI == 'jira-client-api/grouped-by-issues-worklogs/':
@@ -131,7 +131,6 @@ if not ERROR_CODE:
         split_item = {
             "value": int(int(worklog['logged_time']) / 60 / 60 * int(input['salary_per_hour'])),
             "report_date": input['report_date'],
-            "category_id": worklog['issue__project__category_id'],
             "contractor_id": int(input['contractor_id']),
         }
 
@@ -149,6 +148,12 @@ if not ERROR_CODE:
         except ValueError:
             pass
 
+        category_id = worklog['issue__project_category_id']
+        try:
+            split_item['category_id'] = int(category_id)
+        except ValueError:
+            split_item['category_id'] = None
+
         DATA_FOR_SPLIT['items'].append(split_item)
 
 # Добавляем неразбитую часть, если нужна
@@ -158,7 +163,7 @@ if not ERROR_CODE:
         DATA_FOR_SPLIT['items'].append({
             "value": TRANSACTION_VALUE - split_sum,
             "report_date": input['report_date'],
-            "category_id": 4,
+            "category_id": None,
             "contractor_id": int(input['contractor_id'])
         })
     elif split_sum == TRANSACTION_VALUE:
