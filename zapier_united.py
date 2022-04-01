@@ -11,18 +11,34 @@
 # В словаре все значения - строки, поэтому, при необходимости нужно явно делать приведения типов.
 
 input = {  # данные словаря актуальны для тестовых БД и аккаунта в Финологе
-    'jira_account_id': '600ab3c3dfb0c7006940d2f1',
-    'date_from': '2022-03-13T00:00',
-    'date_to': '2022-03-14T00:00',
+    'jira_account_id': '60068f460d83ff0076559478',
+    'date_from': '2022-02-01T00:00',
+    'date_to': '2022-02-28T23:59',
     'jira_issues': 'null',
     'finolog_api_token': 'ez6bwR6oH7Yw5uVi62ebb1a2914e3916796e3eaa959ebcd2wYeD5PBrq6o5Vl4c',
-    'finolog_transaction_id': '48105735',
+    'finolog_transaction_id': '48394062',
     'finolog_biz_id': '45040',
     'order_type': 'out',
     'contractor_id': '3518260',
-    'report_date': '2022-03-23 00:00:00',
+    'report_date': '2022-04-01 00:00:00',
     'category_id': '861972',
-    'salary_per_hour': '20'}
+    'salary_per_hour': '1000'
+}
+
+input = {
+    'jira_account_id': '60068f460d83ff0076559478',
+    'date_from': 'null',
+    'date_to': 'null',
+    'jira_issues': 'BLOG-229,BLOG-234,WBT-1355,WBT-1409',
+    'finolog_api_token': 'ez6bwR6oH7Yw5uVi62ebb1a2914e3916796e3eaa959ebcd2wYeD5PBrq6o5Vl4c',
+    'finolog_transaction_id': '48365059',
+    'finolog_biz_id': '45040',
+    'order_type': 'out',
+    'contractor_id': '3518260',
+    'report_date': '2022-03-31 00:00:00',
+    'category_id': '861972',
+    'salary_per_hour': '100'
+}
 
 import requests
 
@@ -60,11 +76,11 @@ elif JIRA_WORKLOGS_URI == 'jira-client-api/grouped-by-issues-worklogs/':
     wl_params['issue__key'] = input['jira_issues']
 
 wl_json = requests.get(JIRA_WORKLOGS_URL, params=wl_params).json()
+
 #####################################################
 # Удаляем сплит
 headers = {'Api-Token': input['finolog_api_token']}
 requests.delete(FINOLOG_SPLIT_URL, headers=headers).json()
-
 
 #####################################################
 # Делаем запрос на получение инфо о сумме транзакции, чтобы корректно разбить
@@ -81,74 +97,51 @@ else:
 #####################################################
 # Рассчитываем разбивку
 if not ERROR_CODE:
-    # ЕСЛИ РАЗБИВАЕМ ПО ПЕРИОДУ ВРЕМЕНИ
-    if JIRA_WORKLOGS_URI == 'jira-client-api/grouped-worklogs':
-        # ниже список со словарями, куда будут отнесены ворклоги, сгруппированные по проектам и заказам в Финологе,
-        # либо по проектам и отсутствию заказа
-        worklogs_for_split = []
-        # ниже словарь соответствия заказов в проектах и позиций словаря с ворклогами по ним в worklogs_for_split
-        projects_orders_and_positions = {}
+    # ниже список со словарями, куда будут отнесены ворклоги, сгруппированные по проектам и заказам в Финологе,
+    # либо по проектам и отсутствию заказа
+    worklogs_for_split = []
+    # ниже словарь соответствия заказов в проектах и позиций словаря с ворклогами по ним в worklogs_for_split
+    projects_orders_and_positions = {}
 
-        # Учтен случай, когда в рамках одного проекта будут как таски с заказами Финолога (в том числе разными), так и без.
-        # Такие группы тасков будут отображаться отдельно друг от друга в разных строках разбиения
-        for worklog in wl_json['grouped_worklogs']:
-            project_and_order = worklog['issue__project'] + worklog['issue__agreed_order_finolog__finolog_id']
-            if project_and_order not in projects_orders_and_positions.keys():
-                worklogs_for_split.append({})
-                worklogs_for_split[-1]['logged_time'] = 0
-                worklogs_for_split[-1]['issue__project'] = worklog['issue__project']
-                worklogs_for_split[-1]['issue__project_finolog_id'] = worklog['issue__project_finolog_id']
-                worklogs_for_split[-1]['issue__agreed_order_finolog__finolog_id'] = \
-                    worklog['issue__agreed_order_finolog__finolog_id']
+    # Учтен случай, когда в рамках одного проекта будут как таски с заказами Финолога (в том числе разными), так и без.
+    # Такие группы тасков будут отображаться отдельно друг от друга в разных строках разбиения
+    for worklog in wl_json['grouped_worklogs']:
+        project_and_order = worklog['issue__project'] + worklog['issue__agreed_order_finolog__finolog_id']
+        if project_and_order not in projects_orders_and_positions.keys():
+            worklogs_for_split.append({})
+            worklogs_for_split[-1]['logged_time'] = 0
+            worklogs_for_split[-1]['issue__project'] = worklog['issue__project']
+            worklogs_for_split[-1]['issue__agreed_order_finolog__finolog_id'] = \
+                worklog['issue__agreed_order_finolog__finolog_id']
+            worklogs_for_split[-1]['issue__project__category_id'] = worklog['issue__project__category_id']
+            worklogs_for_split[-1]['issue__project_finolog_id'] = worklog['issue__project_finolog_id']
+            # ЕСЛИ РАЗБИВАЕМ ПО ТАСКАМ
+            if JIRA_WORKLOGS_URI == 'jira-client-api/grouped-by-issues-worklogs/':
+                worklogs_for_split[-1]['issue__key'] = worklog['issue__key']
 
-                projects_orders_and_positions[project_and_order] = len(worklogs_for_split) - 1
+            projects_orders_and_positions[project_and_order] = len(worklogs_for_split) - 1
 
-                worklogs_for_split[-1]['logged_time'] += worklog['logged_time']
+            worklogs_for_split[-1]['logged_time'] += worklog['logged_time']
 
-            else:
-                position = projects_orders_and_positions[project_and_order]
-                worklogs_for_split[position]['logged_time'] += worklog['logged_time']
-
-    # ЕСЛИ РАЗБИВАЕМ ПО ТАСКАМ
-    elif JIRA_WORKLOGS_URI == 'jira-client-api/grouped-by-issues-worklogs/':
-        # ниже список со словарями, куда будут отнесены ворклоги, сгруппированные по таскам и по заказам в Финологе,
-        # либо по отсутствию заказа
-        worklogs_for_split = []
-        # ниже словарь соответствия заказов в Финологе и позиций словаря с ворклогами по ним в worklogs_for_split
-        orders_and_positions = {}
-
-        for worklog in wl_json['grouped_on_issues_worklogs']:
-            if worklog['issue__agreed_order_finolog__finolog_id'] not in orders_and_positions.keys():
-                worklogs_for_split.append({})
-                worklogs_for_split[-1]['logged_time'] = 0
-                worklogs_for_split[-1]['issue__agreed_order_finolog__finolog_id'] = \
-                    worklog['issue__agreed_order_finolog__finolog_id']
-
-                orders_and_positions[worklog['issue__agreed_order_finolog__finolog_id']] = len(worklogs_for_split) - 1
-
-                worklogs_for_split[-1]['logged_time'] += worklog['logged_time']
-
-            else:
-                position = orders_and_positions[worklog['issue__agreed_order_finolog__finolog_id']]
-                worklogs_for_split[position]['logged_time'] += worklog['logged_time']
+        else:
+            position = projects_orders_and_positions[project_and_order]
+            worklogs_for_split[position]['logged_time'] += worklog['logged_time']
 
     for worklog in worklogs_for_split:
         split_item = {
             "value": int(int(worklog['logged_time']) / 60 / 60 * int(input['salary_per_hour'])),
             "report_date": input['report_date'],
-            "category_id": int(input['category_id']),
+            "category_id": worklog['issue__project__category_id'],
             "contractor_id": int(input['contractor_id']),
         }
 
-        # ЕСЛИ РАЗБИВАЕМ ПО ПЕРИОДУ ВРЕМЕНИ
-        if JIRA_WORKLOGS_URI == 'jira-client-api/grouped-worklogs':
-            project_id = int(worklog['issue__project_finolog_id'])
-            project_name = worklog['issue__project']
-            if project_id == 0:
-                ERROR_CODE = 'error'
-                ERROR_OUTPUT = f'Нужно в сборщик ворклогов добавить связь jira-finolog для проекта {project_name}'
-            else:
-                split_item['project_id'] = project_id
+        project_name = worklog['issue__project']
+        project_id = int(worklog['issue__project_finolog_id'])
+        if project_id == 0:
+            ERROR_CODE = 'error'
+            ERROR_OUTPUT = f'Нужно в сборщик ворклогов добавить связь jira-finolog для проекта {project_name}'
+        else:
+            split_item['project_id'] = project_id
 
         order_id = worklog['issue__agreed_order_finolog__finolog_id']
         try:
@@ -165,7 +158,7 @@ if not ERROR_CODE:
         DATA_FOR_SPLIT['items'].append({
             "value": TRANSACTION_VALUE - split_sum,
             "report_date": input['report_date'],
-            "category_id": int(input['category_id']),
+            "category_id": 4,
             "contractor_id": int(input['contractor_id'])
         })
     elif split_sum == TRANSACTION_VALUE:

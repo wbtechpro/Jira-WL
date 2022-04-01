@@ -33,7 +33,15 @@ class WorklogSerializer(serializers.Serializer):
             finolog_project_id = int(finolog_project_id.finolog_id)
         else:
             finolog_project_id = 0
+
         grouped_worklog['issue__project_finolog_id'] = finolog_project_id
+
+        category = FinologProject.objects.filter(jira_key=grouped_worklog['issue__project']).first()
+        if category:
+            if category.category_id.isdigit():
+                grouped_worklog['issue__project__category_id'] = int(category.category_id)
+        else:
+            grouped_worklog['issue__project__category_id'] = 'Статья расходов не указана'
 
         return grouped_worklog
 
@@ -67,7 +75,6 @@ class GroupedByProjectWorklogView(BaseWorklogListView):
         return ret_dict
 
 
-
 # Сериализатор и вью для группировки ворклогов по таскам Жиры
 
 class WorklogIssueSerializer(serializers.Serializer):
@@ -75,14 +82,29 @@ class WorklogIssueSerializer(serializers.Serializer):
     logged_time = serializers.IntegerField()
     issue__agreed_order_finolog__finolog_id = serializers.CharField()
     issue__key = serializers.CharField()
+    issue__project = serializers.CharField()
 
     def to_representation(self, instance):
         """
-        Отображает id заказа из Финолога и id таска из Жиры
+        Отображает id заказа из Финолога, id таска из Жиры, проект и статью расходов (категорию)
         вне зависимости от того, сформирован ли в Финологе заказ на этот таск или нет
         """
 
         grouped_worklog = super().to_representation(instance)
+
+        finolog_project_id = FinologProject.objects.filter(jira_key=grouped_worklog['issue__project']).first()
+        if finolog_project_id:
+            finolog_project_id = int(finolog_project_id.finolog_id)
+        else:
+            finolog_project_id = 0
+        grouped_worklog['issue__project_finolog_id'] = finolog_project_id
+
+        category = FinologProject.objects.filter(jira_key=grouped_worklog['issue__project']).first()
+        if category:
+            if category.category_id.isdigit():
+                grouped_worklog['issue__project__category_id'] = int(category.category_id)
+        else:
+            grouped_worklog['issue__project__category_id'] = 'Статья расходов не указана'
 
         return grouped_worklog
 
@@ -95,6 +117,6 @@ class GroupedByIssueWorklogView(GroupedByProjectWorklogView):
         summed_hours = sum([i['logged_time'] for i in data])
         ret_dict = {
             'all_logged_seconds': summed_hours,
-            'grouped_on_issues_worklogs': data
+            'grouped_worklogs': data
         }
         return ret_dict
