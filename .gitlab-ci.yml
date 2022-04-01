@@ -71,5 +71,5 @@ deploy:prod:
     - timeout -t 60 docker-compose logs --tail=50 -f || true
     - docker image prune -af
   only:
-    - master
+    - main
 
