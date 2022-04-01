@@ -109,25 +109,25 @@ class GroupedByIssuesWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
         # Проверка отображения информации о затраченном на все таски и заказы времени (def _get_ret_dict)
         self.assertEqual(response.data['all_logged_seconds'], WorklogWithInfo.objects.aggregate(
             Sum('time_spent_seconds'))['time_spent_seconds__sum'])
-        self.assertEqual(len(response.data['grouped_on_issues_worklogs']), 3)
+        self.assertEqual(len(response.data['grouped_worklogs']), 3)
 
         # Проверка ворклога, у которого не указан таск и на который отсутствует заказ в Финологе (данные только в
         # БД WorklogWithInfo)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][0]['logged_time'], 3600)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][0]['issue__agreed_order_finolog__finolog_id'], None)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][0]['issue__key'], None)
+        self.assertEqual(response.data['grouped_worklogs'][0]['logged_time'], 3600)
+        self.assertEqual(response.data['grouped_worklogs'][0]['issue__agreed_order_finolog__finolog_id'], None)
+        self.assertEqual(response.data['grouped_worklogs'][0]['issue__key'], None)
 
         # Проверка ворклога, у которого указан таск и заказ в Финологе (данные в БД WorklogWithInfo, IssuesInfo,
         # FinologOrder)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][1]['logged_time'], 3600)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][1]['issue__agreed_order_finolog__finolog_id'], '3')
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][1]['issue__key'], 'add_test-234')
+        self.assertEqual(response.data['grouped_worklogs'][1]['logged_time'], 3600)
+        self.assertEqual(response.data['grouped_worklogs'][1]['issue__agreed_order_finolog__finolog_id'], '3')
+        self.assertEqual(response.data['grouped_worklogs'][1]['issue__key'], 'add_test-234')
 
         # Проверка ворклога, у которого указан таск, однако в Финологе отсутствует информация о заказе (данные в БД
         # WorklogWithInfo, IssuesInfo)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][2]['logged_time'], 3600)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][2]['issue__agreed_order_finolog__finolog_id'], None)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][2]['issue__key'], 'test-123')
+        self.assertEqual(response.data['grouped_worklogs'][2]['logged_time'], 3600)
+        self.assertEqual(response.data['grouped_worklogs'][2]['issue__agreed_order_finolog__finolog_id'], None)
+        self.assertEqual(response.data['grouped_worklogs'][2]['issue__key'], 'test-123')
 
     def test_grouped_by_issues_view_and_serializer_head(self):
         """
@@ -140,27 +140,27 @@ class GroupedByIssuesWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
         # Проверка отображения информации о затраченном на все таски и заказы времени (def _get_ret_dict)
         self.assertEqual(response.data['all_logged_seconds'], WorklogWithInfo.objects.aggregate(
             Sum('time_spent_seconds'))['time_spent_seconds__sum'])
-        self.assertEqual(len(response.data['grouped_on_issues_worklogs']), 3)
+        self.assertEqual(len(response.data['grouped_worklogs']), 3)
 
         # Проверка ворклога, у которого не указан таск и на который отсутствует заказ в Финологе (данные только в
         # БД WorklogWithInfo)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][0]['logged_time'], 3600)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][0]['issue__agreed_order_finolog__finolog_id'],
+        self.assertEqual(response.data['grouped_worklogs'][0]['logged_time'], 3600)
+        self.assertEqual(response.data['grouped_worklogs'][0]['issue__agreed_order_finolog__finolog_id'],
                          None)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][0]['issue__key'], None)
+        self.assertEqual(response.data['grouped_worklogs'][0]['issue__key'], None)
 
         # Проверка ворклога, у которого указан таск и заказ в Финологе (данные в БД WorklogWithInfo, IssuesInfo,
         # FinologOrder)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][1]['logged_time'], 3600)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][1]['issue__agreed_order_finolog__finolog_id'], '3')
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][1]['issue__key'], 'add_test-234')
+        self.assertEqual(response.data['grouped_worklogs'][1]['logged_time'], 3600)
+        self.assertEqual(response.data['grouped_worklogs'][1]['issue__agreed_order_finolog__finolog_id'], '3')
+        self.assertEqual(response.data['grouped_worklogs'][1]['issue__key'], 'add_test-234')
 
         # Проверка ворклога, у которого указан таск, однако в Финологе отсутствует информация о заказе (данные в БД
         # WorklogWithInfo, IssuesInfo)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][2]['logged_time'], 3600)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][2]['issue__agreed_order_finolog__finolog_id'],
+        self.assertEqual(response.data['grouped_worklogs'][2]['logged_time'], 3600)
+        self.assertEqual(response.data['grouped_worklogs'][2]['issue__agreed_order_finolog__finolog_id'],
                          None)
-        self.assertEqual(response.data['grouped_on_issues_worklogs'][2]['issue__key'], 'test-123')
+        self.assertEqual(response.data['grouped_worklogs'][2]['issue__key'], 'test-123')
 
     def test_grouped_by_issues_view_and_serializer_prohibited_methods(self):
         """
