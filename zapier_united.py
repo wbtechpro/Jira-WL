@@ -152,7 +152,7 @@ if not ERROR_CODE:
         try:
             split_item['category_id'] = int(category_id)
         except ValueError:
-            split_item['category_id'] = None
+            split_item['category_id'] = input['category_id']
 
         DATA_FOR_SPLIT['items'].append(split_item)
 
@@ -163,7 +163,7 @@ if not ERROR_CODE:
         DATA_FOR_SPLIT['items'].append({
             "value": TRANSACTION_VALUE - split_sum,
             "report_date": input['report_date'],
-            "category_id": None,
+            "category_id": input['category_id'],
             "contractor_id": int(input['contractor_id'])
         })
     elif split_sum == TRANSACTION_VALUE:
