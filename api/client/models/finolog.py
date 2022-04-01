@@ -52,7 +52,7 @@ class FinologProject(models.Model):
 
     jira_key = models.CharField(max_length=50, unique=True)
     finolog_id = models.CharField(max_length=50)
-    category_id = models.CharField(max_length=250, null=True, blank=True)
+    category_id = models.CharField(max_length=250, blank=True, default='Статья расходов не указана')
 
     class Meta:
         verbose_name = 'проект в Финологе'
