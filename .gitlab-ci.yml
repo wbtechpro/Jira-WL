@@ -1,7 +1,12 @@
+variables:
+  SERVER_PROTOCOL: 'http'
+  SERVER_IP: '45.89.26.238'
+  SERVER_NAME: 'jira-wl.wbtech.pro'
+
 stages:
   - build
   - test
-  #- deploy
+  - deploy
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
@@ -48,3 +53,23 @@ test:feature:
     - docker-compose build
     - docker-compose run api python manage.py test
     - docker-compose stop
+  
+deploy:prod:
+  stage: deploy
+  environment:
+    name: prod
+    url: '$SERVER_PROTOCOL://$SERVER_NAME'
+  variables:
+    DOCKER_TLS_VERIFY: '1'
+    DOCKER_HOST: 'tcp://$SERVER_IP:2376'
+    DOCKER_CERT_PATH: '/certs/${CI_PROJECT_PATH_SLUG}-prod/'
+    SERVER_NAME: '${SERVER_NAME}'
+  script:
+    - docker-compose pull
+    - docker-compose up -d -V
+    - docker-compose exec -T nginx nginx -s reload
+    - timeout -t 60 docker-compose logs --tail=50 -f || true
+    - docker image prune -af
+  only:
+    - master
+
