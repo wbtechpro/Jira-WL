@@ -11,7 +11,11 @@ services:
     depends_on:
       - db
     environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       SERVER_NAME: ${SERVER_NAME}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
+      JIRA_USERNAME: ${JIRA_USERNAME}
     command: >
       uwsgi
         --socket 0.0.0.0:8000
@@ -36,7 +40,7 @@ services:
   db:
     image: postgres:10
     environment:
-      POSTGRES_PASSWORD: "password"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - "db:/var/lib/postgresql/data/"
     # POSTGRES_HOST_AUTH_METHOD=trust
