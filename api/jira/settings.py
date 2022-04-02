@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DEBUG'))
 
-ALLOWED_HOSTS = [os.environ.get('SERVER_NAME', 'jira-wl.lvh.me')]
+ALLOWED_HOSTS = ['localhost', os.environ.get('SERVER_NAME')]
 
 
 # Application definition
@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'db-password'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'HOST': 'db',
         'PORT': '5432',
     }
@@ -160,8 +160,8 @@ sentry_sdk.init(
 #####################################################################
 
 
-USERNAME = os.environ.get('JIRA_USERNAME', 'jira@wbtech.pro')
-API_TOKEN = os.environ.get('JIRA_API_TOKEN', '')
+USERNAME = os.environ.get('JIRA_USERNAME')
+API_TOKEN = os.environ.get('JIRA_API_TOKEN')
 
 
 FILENAME_PERCENTS = os.path.join(BASE_DIR, 'last-month-by-percents.json')  # Использовался в старых версиях, когда сохранялось в файл
