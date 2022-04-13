@@ -3,3 +3,4 @@ SHELL=/bin/bash
 0 1 * * * /usr/local/bin/python /usr/src/api/manage.py run_client > /proc/1/fd/1 2>/proc/1/fd/2
 0 1 * * * /usr/local/bin/python /usr/src/api/manage.py load_default_projects > /proc/1/fd/1 2>/proc/1/fd/2
 0 0 28 * * /usr/local/bin/python /usr/src/api/manage.py automatic_date_update > /proc/1/fd/1 2>/proc/1/fd/2
+0 0 1-27,29-31 * 2 /usr/local/bin/python /usr/src/api/manage.py tuesdays_date_update > /proc/1/fd/1 2>/proc/1/fd/2
