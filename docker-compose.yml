@@ -34,6 +34,9 @@ services:
     image: ${CI_REGISTRY_IMAGE}/cron
     depends_on:
       - db
+    environment:
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
     command: >
       cron -f
 
