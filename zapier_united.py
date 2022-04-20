@@ -40,6 +40,20 @@ input = {
     'salary_per_hour': '100'
 }
 
+input = {
+    'jira_account_id': '5c671f9dcefe97640e69ba86',
+    'date_from': '2021-11-01',
+    'date_to': '2021-11-30',
+    'jira_issues': 'null',
+    'finolog_api_token': '4T35Va8JMnFJO35I982246284277c01e5122f22ed256b39b1p9ZCFg7eL4H9ZNK',
+    'finolog_transaction_id': '44786236',
+    'finolog_biz_id': '25467',
+    'order_type': 'out',
+    'contractor_id': '1947878',
+    'report_date': '2021-11-27 00:00:00',
+    'category_id': '1947878',
+    'salary_per_hour': '455'
+}
 import requests
 
 # Константы
@@ -152,7 +166,7 @@ if not ERROR_CODE:
         try:
             split_item['category_id'] = int(category_id)
         except ValueError:
-            split_item['category_id'] = input['category_id']
+            split_item['category_id'] = int(input['category_id'])
 
         DATA_FOR_SPLIT['items'].append(split_item)
 
@@ -163,7 +177,7 @@ if not ERROR_CODE:
         DATA_FOR_SPLIT['items'].append({
             "value": TRANSACTION_VALUE - split_sum,
             "report_date": input['report_date'],
-            "category_id": input['category_id'],
+            "category_id": int(input['category_id']),
             "contractor_id": int(input['contractor_id'])
         })
     elif split_sum == TRANSACTION_VALUE:
