@@ -31,3 +31,14 @@ class FinologProjectViewSet(viewsets.ViewSet):
         serializer.is_valid()
         serializer.save()
         return Response(serializer.data, status=201)
+
+    def update(self, request, pk=None):
+        data = request.data
+        queryset = FinologProject.objects.all()
+        finolog_project = get_object_or_404(queryset, pk=pk)
+        finolog_project.jira_key = data['jira_key']
+        finolog_project.finolog_id = data['finolog_id']
+        if 'category_id' in data.keys():
+            finolog_project.cateory_id = data['category_id']
+        serializer = FinologProjectSerializer(finolog_project)
+        return Response(serializer.data, status=200)
