@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '+hg0e$ugtvrah2rkul0)uvi8=fssm_1193(sfq@mh@slkqcx%6')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '@d75khw7d%6q-%z81_pv-x*4q+0o_zi78f21lsrp@9a(009y6i')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DEBUG'))
 
@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'password'),
         'HOST': 'db',
         'PORT': '5432',
     }
@@ -161,7 +161,7 @@ sentry_sdk.init(
 
 
 USERNAME = os.environ.get('JIRA_USERNAME')
-API_TOKEN = os.environ.get('JIRA_API_TOKEN')
+API_TOKEN = os.environ.get('JIRA_API_TOKEN', 'rwcX1dkvzjcdKONaYepdA0A9')
 
 
 FILENAME_PERCENTS = os.path.join(BASE_DIR, 'last-month-by-percents.json')  # Использовался в старых версиях, когда сохранялось в файл
