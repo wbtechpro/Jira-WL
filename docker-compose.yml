@@ -10,12 +10,6 @@ services:
       - /usr/src/webroot
     depends_on:
       - db
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      SERVER_NAME: ${SERVER_NAME}
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
-      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
-      JIRA_USERNAME: ${JIRA_USERNAME}
     command: >
       uwsgi
         --socket 0.0.0.0:8000
@@ -34,16 +28,13 @@ services:
     image: ${CI_REGISTRY_IMAGE}/cron
     depends_on:
       - db
-    environment:
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
     command: >
       cron -f
 
   db:
     image: postgres:10
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: "db-password"
     volumes:
       - "db:/var/lib/postgresql/data/"
     # POSTGRES_HOST_AUTH_METHOD=trust

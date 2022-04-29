@@ -27,7 +27,7 @@ SECRET_KEY = '+hg0e$ugtvrah2rkul0)uvi8=fssm_1193(sfq@mh@slkqcx%6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get('DEBUG'))
 
-ALLOWED_HOSTS = ['localhost', os.environ.get('SERVER_NAME')]
+ALLOWED_HOSTS = ['jira-wl.wbtech.pro', 'localhost', 'jira-wl.lvh.me']
 
 
 # Application definition
