@@ -34,7 +34,7 @@ services:
   db:
     image: postgres:10
     environment:
-      POSTGRES_PASSWORD: "password"
+      POSTGRES_PASSWORD: "db-password"
     volumes:
       - "db:/var/lib/postgresql/data/"
     # POSTGRES_HOST_AUTH_METHOD=trust
