@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 
 from client.models import FinologProject
 
-
 default_projects = (
     (118854, 'AREND'),
     (118959, 'BIOM'),
@@ -27,15 +26,15 @@ default_projects = (
 
 
 class Command(BaseCommand):
-
     """
     (Пере)создает дефолтные проекты
     """
 
-    help = 'Создает суперпользователя для админки'
-
     def handle(self, *args, **options):
 
         for finolog_id, jira_key in default_projects:
-            FinologProject.objects.get_or_create(finolog_id=finolog_id, jira_key=jira_key)
+            try:
+                FinologProject.objects.get(jira_key=jira_key)
+            except FinologProject.DoesNotExist:
+                FinologProject.objects.create(jira_key=jira_key, finolog_id=finolog_id)
         print('default projects (re)created')
