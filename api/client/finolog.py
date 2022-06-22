@@ -7,7 +7,7 @@ def _get_api_token():
     token = FinologApiToken.objects.first()
     if token:
         return token.token
-    return 'TwtkzIH15gt19MRF008d56e922fa945f33916e0f3ede7f107R1Gow6ua9MX8Mfi'  # Старый на всяк случай
+    return 'TwtkzIH15gt19MRF008d56e922fa945f33916e0f3ede7f107R1Gow6ua9MX8Mfi'  # Old just in case
 
 
 def get_finolog_orger_id_from_jira_key(jira_key):

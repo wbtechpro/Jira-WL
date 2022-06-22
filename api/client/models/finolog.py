@@ -15,7 +15,7 @@ class FinologApiToken(models.Model):
 class FinologOrder(models.Model):
 
     """
-    Модель-соответствие таску-заказу (issue) в жире и заказу в финологе
+    Model-correspondence to the task-order (issue) in Jira and order in Finolog
     """
 
     jira_key = models.CharField(max_length=50)
@@ -42,12 +42,12 @@ class FinologOrder(models.Model):
 class FinologProject(models.Model):
 
     """
-    Модель-соответствие проекту (issue) в жире и заказу в финологе
+    Model-correspondence to the project (issue) in Jira and order in Finolog
     118854: 'AREND',
     118959: 'BIOM',
     121411: 'BLOG',
-    и т.п.
-    Есть джанго комманда для загрузки дефолтных
+    etc.
+    There is a django command to load the default ones
     """
 
     jira_key = models.CharField(max_length=50, unique=True)

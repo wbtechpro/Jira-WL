@@ -7,7 +7,7 @@ class WorklogQuerySet(models.QuerySet):
 
     def group_worklogs_by_agreed_orders(self):
         """
-        Группирует по задачам, принадлежащим к заказам и считает суммарные ворклоги
+        Groups by tasks belonging to orders and counts total worklogs
         """
         query = self.values(
             # 'issue__agreed_order_key',
@@ -54,7 +54,7 @@ class WorklogWithInfo(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        В клиенте передается только json из jira API, а здесь из json наполняются отдельные поля
+        In the client, only json from Jira API is transmitted, and here separate fields are filled from json
         """
         self.display_name = self.json_data.get('author').get('displayName')
         self.url = self.json_data.get('self')

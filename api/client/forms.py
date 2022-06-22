@@ -4,8 +4,8 @@ from dateutil.relativedelta import relativedelta
 
 def period_in_days_does_not_exceed_3_months(end_date):
     """
-    Проверяет, не превыашет ли количество заданных для загрузки ворклогов дней период в три предшествующих месяца от
-    текущего месяца.
+    Checks if the number of days specified for loading worklogs does not exceed the period of three previous months
+    from the current month.
     """
     worklogs_download_perion_date = end_date - relativedelta(months=3)
     worklogs_download_perion_days = end_date - worklogs_download_perion_date

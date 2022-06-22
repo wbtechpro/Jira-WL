@@ -1,10 +1,10 @@
-# Скрипт для запира на разбивку транзакций в финологе. Исходные данные он получает из текущего проекта
-# В запире на вход подается словарь input. Здесь такое поведение эмулируется.
-# В словаре все значения - строки, поэтому, при необходимости нужно явно делать приведения типов
+# Script for Zapier to split transactions in Finolog by tasks, not by time period.
+# In Zapier, the input is an input dictionary. This behavior is emulated here.
+# In the dictionary, all values are strings, so if necessary, you need to explicitly cast types
 
-# На вход получаем айди человека, айди транзакции в финологе, даты от-до
+# At the input we get the id of the person, the id of the transaction in Finolog, the dates from-to
 
-input = {  # данные словаря актуальны для тестовых БД и аккаунта в Финологе
+input = {  # dictionary data is relevant for test databases and an account in Finolog
     'jira_account_id': '600ab3c3dfb0c7006940d2f1',
     'date_from': '2022-03-13T00:00',
     'date_to': '2022-03-14T00:00',
@@ -19,7 +19,7 @@ input = {  # данные словаря актуальны для тестов�
 
 import requests
 
-# Константы
+# Constants
 JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
 JIRA_WORKLOGS_URI = 'jira-client-api/grouped-worklogs'
 JIRA_WORKLOGS_URL = f'https://{JIRA_WORKLOGS_DOMAIN}/{JIRA_WORKLOGS_URI}'
@@ -34,7 +34,7 @@ ERROR_CODE = None
 ERROR_OUTPUT = None
 
 #####################################################
-# Получаем данные о ворклогах
+# Getting data about worklogs by dates
 wl_params = {
     'account_id': input['jira_account_id'],
     'started_start_date': input['date_from'],
@@ -43,13 +43,13 @@ wl_params = {
 wl_json = requests.get(JIRA_WORKLOGS_URL, params=wl_params).json()
 
 #####################################################
-# Удаляем сплит
+# Deleting split
 headers = {'Api-Token': input['finolog_api_token']}
 requests.delete(FINOLOG_SPLIT_URL, headers=headers).json()
 
 
 #####################################################
-# Делаем запрос на получение инфо о сумме транзакции, чтобы корректно разбить
+# Making a request to receive information about the amount of the transaction in order to correctly split
 
 headers = {'Api-Token': input['finolog_api_token']}
 trans_info_json = requests.get(FINOLOG_TRANSACTION_INFO_URL, headers=headers).json()
@@ -61,14 +61,15 @@ else:
     ERROR_OUTPUT = 'Не удалось получить инфо о транзакции'
 
 #####################################################
-# Рассчитываем разбивку
+# Calculating splitting
 if not ERROR_CODE:
-    worklogs_without_finolog_orders = []  # список со словарями, куда будут отнесены все таски без заказа в Финологе
-    worklogs_for_split = []  # список со словарями, куда будут отнесены все таски с заказом в Финологе
+    worklogs_without_finolog_orders = []  # a list with dictionaries where all tasks without an order in Finolog will
+    # be assigned
+    worklogs_for_split = []  # a list with dictionaries, where all tasks with an order in Finolog will be assigned
 
-    # Проверка на то, подпадают ли таски, относящиеся к проекту, под заказы Финолога. Учтен случай, когда в рамках
-    # одного проекта будут как таски с заказом Финолога, так и без.
-    # Такие группы тасков будут отображаться отдельно друг от друга в разных строках разбиения
+    # Checking if the tasks related to the project fall under Finolog's orders. The case is taken into account when,
+    # within the framework of of one project there will be both tasks with the order of Finolog, and without.Such
+    # groups of tasks will be displayed separately from each other in different split lines
     for worklog in wl_json['grouped_worklogs']:
         if worklog['issue__agreed_order_finolog__finolog_id'] == 'не удалось найти id заказа в финологе':
             if not any(w['issue__project'] == worklog['issue__project'] for w in worklogs_without_finolog_orders):
@@ -84,7 +85,7 @@ if not ERROR_CODE:
         else:
             worklogs_for_split.append(worklog)
 
-    worklogs_for_split += worklogs_without_finolog_orders  # объединяем два списка с тасками в один
+    worklogs_for_split += worklogs_without_finolog_orders  # combine two lists with tasks into one
 
     for worklog in worklogs_for_split:
         split_item = {
@@ -109,7 +110,7 @@ if not ERROR_CODE:
 
         DATA_FOR_SPLIT['items'].append(split_item)
 
-# Добавляем неразбитую часть, если нужна
+# Adding unsplitted part if needed
 if not ERROR_CODE:
     split_sum = sum([i['value'] for i in DATA_FOR_SPLIT['items']])
     if split_sum < TRANSACTION_VALUE:
@@ -124,7 +125,7 @@ if not ERROR_CODE:
         ERROR_OUTPUT = 'Сумма <ворклоги*ставка> больше размера транзакции.'
 
 #####################################################
-# Делаем пост-запрос на разбивку
+# Making a post-request for splitting
 if not ERROR_CODE:
     headers = {
         'Accept': '*/*',

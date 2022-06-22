@@ -32,7 +32,7 @@ class IssuesInfo(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        В клиенте передается только json из jira API, а здесь из json наполняются отдельные поля
+        In the client, only json from Jira API is transmitted, and here separate fields are filled from json
         """
         self.url = self.json_data.get('self')
         self.summary = self.json_data.get('fields').get('summary')
@@ -45,17 +45,17 @@ class IssuesInfo(models.Model):
     @property
     def is_agreed_order(self):
         """
-        Согласованный заказчиком заказ
-        У согласованного заказа есть специальное поле "отправлять в финолог"
+        Order agreed by the customer
+        The agreed order has a special field "send to Finolog"
         """
         if x := self.json_data.get('fields').get('customfield_10376'):
-            # Возвращает "Отправить" - т.е. таск нужно отправлять в финолог, как согласовнный
+            # Returns "Submit" - i.e. the task must be sent to Finolog as agreed
             return bool(x[0].get('value'))
         return False
 
     def _get_agreed_order_key(self):
         """
-        Возвращает индекс родительского согласованного заказа, или собственный, если таск сам является согл заказом
+        Returns the index of the parent matched order, or its own if the task itself is a matched order
         """
         if self.is_agreed_order:
             return self.key

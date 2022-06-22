@@ -14,12 +14,12 @@ class WorklogSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         """
-        Фишка в том, чтобы выделять только заказы из финолога.
-        А для таких отдельно показывать и жира-ключ
+        The point is to highlight only orders from Finolog.
+        And for such separately show Jira key
         """
         grouped_worklog = super().to_representation(instance)
 
-        # Вставляем жира ключи
+        # Insert Jira keys
         jira_key = ''
         if grouped_worklog['issue__agreed_order_finolog__finolog_id'] is not None \
                 and grouped_worklog['issue__agreed_order_finolog__finolog_id'].isdigit():
@@ -27,7 +27,7 @@ class WorklogSerializer(serializers.Serializer):
             jira_key = FinologOrder.objects.get(finolog_id=finolog_id).jira_key
         grouped_worklog['issue__agreed_order_finolog__jira_key'] = jira_key
 
-        # Вставляем айдишники финолога
+        # Insert Finolog ids
         finolog_project_id = FinologProject.objects.filter(jira_key=grouped_worklog['issue__project']).first()
         if finolog_project_id:
             finolog_project_id = int(finolog_project_id.finolog_id)
@@ -79,7 +79,7 @@ class GroupedByProjectWorklogView(BaseWorklogListView):
         return ret_dict
 
 
-# Сериализатор и вью для группировки ворклогов по таскам Жиры
+# Serializer and view for grouping worklogs by Jira tasks
 
 class WorklogIssueSerializer(serializers.Serializer):
 
@@ -90,8 +90,8 @@ class WorklogIssueSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         """
-        Отображает id заказа из Финолога, id таска из Жиры, проект и статью расходов (категорию)
-        вне зависимости от того, сформирован ли в Финологе заказ на этот таск или нет
+        Displays order id from Finolog, task id from Jira, project and expense item (category), regardless of
+        whether the order for this task is generated in Finolog or not
         """
 
         grouped_worklog = super().to_representation(instance)

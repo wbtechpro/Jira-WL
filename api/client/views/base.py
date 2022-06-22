@@ -6,7 +6,7 @@ from client.models import WorklogWithInfo, IssuesInfo
 from client.serializers import WorklogSerializer, IssueSerializer
 
 
-class CharInFilter(filters.BaseInFilter, filters.CharFilter):  # фильтр на основе CVS для поиска нескольких тасков Жиры
+class CharInFilter(filters.BaseInFilter, filters.CharFilter):  # CVS-based filter to search for multiple Jira tasks
     pass
 
 
@@ -24,7 +24,7 @@ class BaseWorklogWithInfoFilter(filters.FilterSet):
 
     issue__project = filters.CharFilter(field_name='issue__project')
 
-    issue__key = CharInFilter(field_name='issue__key', lookup_expr='in')  # фильтрация по названиям тасков Жиры
+    issue__key = CharInFilter(field_name='issue__key', lookup_expr='in')  # filtering by Jira task names
 
     class Meta:
         model = WorklogWithInfo

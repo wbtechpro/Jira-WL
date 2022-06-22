@@ -1,16 +1,16 @@
-# Обобщенный скрипт для Запира на разбивку транзакций в Финологе для двух случаев - когда разбиние происходит по
-# периоду времени и по таскам. Сочетает в себе файлы zapier.py и zapier_split_on_issues.py.
+# A generalized script for Zapier transactions in Finolog for two cases - when splitting occurs according to time
+# period and tasks. Combines zapier.py and zapier_split_on_issues.py files.
 
-# В случае, если разбиение осуществляется по периоду времени, то на вход подаются id сотрудника, стартовая дата и
-# конечная дата, при этом поле с тасками является пустым - 'null'.
+# If the splitting is carried out by a period of time, then the employee's id, start date and end date,
+# while the field with tasks is empty - 'null'.
 
-# В случае, если разбиение осуществляется по таскам, то на вход подаются id сотрудника и таск(-и), при этом поля со
-# стартовой и конечноц датами являются пустыми - 'null'.
+# If the splitting is carried out by tasks, then the employee id and task(s) are used as input, while the fields with
+# start and end dates are empty - 'null'.
 
-# В Запире на вход подается словарь input. Здесь такое поведение эмулируется.
-# В словаре все значения - строки, поэтому, при необходимости нужно явно делать приведения типов.
+# In Zapier, the input is an input dictionary. This behavior is emulated here.
+# In the dictionary, all values are strings, so if necessary, you need to explicitly cast types
 
-input = {  # данные словаря актуальны для тестовых БД и аккаунта в Финологе
+input = {  # dictionary data is relevant for test databases and an account in Finolog
     'jira_account_id': '60068f460d83ff0076559478',
     'date_from': '2022-02-01T00:00',
     'date_to': '2022-02-28T23:59',
@@ -56,13 +56,13 @@ input = {
 }
 import requests
 
-# Константы
+# Constants
 JIRA_WORKLOGS_DOMAIN = 'jira-wl.wbtech.pro'
 
-# ЕСЛИ РАЗБИВАЕМ ПО ПЕРИОДУ ВРЕМЕНИ
+# IF DIVISION BY TIME PERIOD
 if input['jira_issues'] == 'null' and input['date_from'] != 'null' and input['date_to'] != 'null':
     JIRA_WORKLOGS_URI = 'jira-client-api/grouped-worklogs'
-# ЕСЛИ РАЗБИВАЕМ ПО ТАСКАМ
+# IF DIVISION BY TASKS
 elif input['date_from'] == 'null' and input['date_to'] == 'null' and input['jira_issues'] != 'null':
     JIRA_WORKLOGS_URI = 'jira-client-api/grouped-by-issues-worklogs/'
 
@@ -78,26 +78,26 @@ ERROR_CODE = None
 ERROR_OUTPUT = None
 
 #####################################################
-# Получаем данные о ворклогах
+# Getting data about worklogs
 wl_params = {'account_id': input['jira_account_id']}
 
-# ЕСЛИ РАЗБИВАЕМ ПО ПЕРИОДУ ВРЕМЕНИ
+# IF DIVISION BY TIME PERIOD
 if JIRA_WORKLOGS_URI == 'jira-client-api/grouped-worklogs':
     wl_params['started_start_date'] = input['date_from']
     wl_params['started_finish_date'] = input['date_to']
-# ЕСЛИ РАЗБИВАЕМ ПО ТАСКАМ
+# IF DIVISION BY TASKS
 elif JIRA_WORKLOGS_URI == 'jira-client-api/grouped-by-issues-worklogs/':
     wl_params['issue__key'] = input['jira_issues']
 
 wl_json = requests.get(JIRA_WORKLOGS_URL, params=wl_params).json()
 
 #####################################################
-# Удаляем сплит
+# Deleting split
 headers = {'Api-Token': input['finolog_api_token']}
 requests.delete(FINOLOG_SPLIT_URL, headers=headers).json()
 
 #####################################################
-# Делаем запрос на получение инфо о сумме транзакции, чтобы корректно разбить
+# Making a request to receive information about the amount of the transaction in order to correctly split
 
 headers = {'Api-Token': input['finolog_api_token']}
 trans_info_json = requests.get(FINOLOG_TRANSACTION_INFO_URL, headers=headers).json()
@@ -109,16 +109,18 @@ else:
     ERROR_OUTPUT = 'Не удалось получить инфо о транзакции'
 
 #####################################################
-# Рассчитываем разбивку
+# Calculating splitting
 if not ERROR_CODE:
-    # ниже список со словарями, куда будут отнесены ворклоги, сгруппированные по проектам и заказам в Финологе,
-    # либо по проектам и отсутствию заказа
+    # below is a list with dictionaries, which will include worklogs grouped by projects and orders in Finolog,
+    # or by projects and no order
     worklogs_for_split = []
-    # ниже словарь соответствия заказов в проектах и позиций словаря с ворклогами по ним в worklogs_for_split
+    # below is a dictionary of matching orders in projects and dictionary positions with worklogs for them in
+    # worklogs_for_split
     projects_orders_and_positions = {}
 
-    # Учтен случай, когда в рамках одного проекта будут как таски с заказами Финолога (в том числе разными), так и без.
-    # Такие группы тасков будут отображаться отдельно друг от друга в разных строках разбиения
+    # The case is taken into account when, within the framework of one project, there will be both tasks with
+    # Finolog's orders (including different ones), and without them. Such groups of tasks will be displayed
+    # separately from each other in different split lines
     for worklog in wl_json['grouped_worklogs']:
         project_and_order = worklog['issue__project'] + worklog['issue__agreed_order_finolog__finolog_id']
         if project_and_order not in projects_orders_and_positions.keys():
@@ -129,7 +131,7 @@ if not ERROR_CODE:
                 worklog['issue__agreed_order_finolog__finolog_id']
             worklogs_for_split[-1]['issue__project_category_id'] = worklog['issue__project_category_id']
             worklogs_for_split[-1]['issue__project_finolog_id'] = worklog['issue__project_finolog_id']
-            # ЕСЛИ РАЗБИВАЕМ ПО ТАСКАМ
+            # IF DIVISION BY TASKS
             if JIRA_WORKLOGS_URI == 'jira-client-api/grouped-by-issues-worklogs/':
                 worklogs_for_split[-1]['issue__key'] = worklog['issue__key']
 
@@ -170,7 +172,7 @@ if not ERROR_CODE:
 
         DATA_FOR_SPLIT['items'].append(split_item)
 
-# Добавляем неразбитую часть, если нужна
+# Adding unsplitted part if needed
 if not ERROR_CODE:
     split_sum = sum([i['value'] for i in DATA_FOR_SPLIT['items']])
     if split_sum < TRANSACTION_VALUE:
@@ -187,7 +189,7 @@ if not ERROR_CODE:
         ERROR_OUTPUT = 'Сумма <ворклоги*ставка> больше размера транзакции.'
 
 #####################################################
-# Делаем пост-запрос на разбивку
+# Making a post-request for splitting
 if not ERROR_CODE:
     headers = {
         'Accept': '*/*',

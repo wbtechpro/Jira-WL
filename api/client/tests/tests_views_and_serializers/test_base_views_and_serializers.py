@@ -9,13 +9,14 @@ class WorklogsBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_worklogs_info_display_get(self):
         """
-        Проверяет работу вью и сериализатора, которые отображают информацию о ворклогах из Jira, с методом get
+        Checks the operation of the view and the serializer, which display information about worklogs from Jira,
+        with the get method
         """
         response = self.client.get(self.base_worklogs_view)
         worklogs_info = WorklogWithInfo.objects.values(*self.test_data_worklog_fields)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data[0]['id'], worklogs_info[0]['id'])  # сравнение полей сделано вручную, так как
-        # в ответе с сервера все даты и время отображаются в формате ISO 8601
+        self.assertEqual(response.data[0]['id'], worklogs_info[0]['id'])  # comparison of fields is done manually,
+        # since in the response from the server all dates and times are displayed in ISO 8601 format
         self.assertEqual(response.data[0]['url'], worklogs_info[0]['url'])
         self.assertEqual(response.data[0]['display_name'], worklogs_info[0]['display_name'])
         self.assertEqual(response.data[0]['account_id'], worklogs_info[0]['account_id'])
@@ -30,13 +31,13 @@ class WorklogsBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_worklogs_info_display_head(self):
         """
-        Проверяет работу вью и сериализатора, которые отображают информацию о ворклогах из Jira, с методом get
+        Checks the operation of the view and the serializer, which display information about worklogs from Jira, with the get method
         """
         response = self.client.head(self.base_worklogs_view)
         worklogs_info = WorklogWithInfo.objects.values(*self.test_data_worklog_fields)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data[0]['id'], worklogs_info[0]['id'])  # сравнение полей сделано вручную, так как
-        # в ответе с сервера все даты и время отображаются в формате ISO 8601
+        self.assertEqual(response.data[0]['id'], worklogs_info[0]['id'])  # comparison of fields is done manually, since
+        # in the response from the server all dates and times are displayed in ISO 8601 format
         self.assertEqual(response.data[0]['url'], worklogs_info[0]['url'])
         self.assertEqual(response.data[0]['display_name'], worklogs_info[0]['display_name'])
         self.assertEqual(response.data[0]['account_id'], worklogs_info[0]['account_id'])
@@ -51,16 +52,16 @@ class WorklogsBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_worklogs_info_display_prohibited_methods(self):
         """
-        Проверяет, что вью не работает с http-методами, помимо указанных (get, head)
+        Checks that the view does not work with http methods other than those specified (get, head)
         """
         response = self.client.post(self.base_worklogs_view)
         self.assertEqual(response.status_code, 405)
 
     def test_worklogs_data_filters_dates(self):
         """
-        Проверяет работу фильтра, который отбирает значения по полям updated_start_date, updated_finish_date,
+        Checks the operation of a filter that selects values by the fields updated_start_date, updated_finish_date,
         created_start_date, created_finish_date, started_start_date, started_finish_date
-        Конкретно в этом тесте проверяется фильтрация по двум параметрам: created_start_date и started_finish_date
+        Specifically, in this test, filtering by two parameters is checked: created_start_date and started_finish_date
         """
         response = self.client.get(self.base_worklogs_view + '?updated=&started=&created=&account_id=&issue__project'
                                                              '=&issue__key=&updated_start_date=&updated_finish_date'
@@ -78,7 +79,7 @@ class WorklogsBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_worklogs_data_filters_account_id(self):
         """
-        Проверяет работу фильтра, который отбирает значения по полю account_id
+        Checks the operation of the filter that selects values by the field account_id
         """
         response = self.client.get(self.base_worklogs_view + '?updated=&started=&created=&account_id=1&issue__project'
                                                              '=&issue__key=&updated_start_date=&updated_finish_date'
@@ -93,7 +94,7 @@ class WorklogsBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_worklogs_data_filters_issue__project(self):
         """
-        Проверяет работу фильтра, который отбирает значения по полю issue__project
+        Checks the operation of the filter that selects values by the issue_project field
         """
         response = self.client.get(self.base_worklogs_view + '?updated=&started=&created=&account_id=&issue__project'
                                                              '=add_test&issue__key=&updated_start_date'
@@ -108,8 +109,8 @@ class WorklogsBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_worklogs_data_filters_single_issue__key(self):
         """
-        Проверяет работу фильтра, который отбирает значения по полю issue__key
-        В данном тесте проверяется случай, когда ищется один таск
+        Checks the operation of the filter that selects values by the issue_key field
+        In this test, the case is checked when one task is searched
         """
         response = self.client.get(self.base_worklogs_view + '?updated=&started=&created=&account_id=&issue__project'
                                                              '=&issue__key=add_test-234&updated_start_date'
@@ -124,8 +125,8 @@ class WorklogsBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_worklogs_data_filters_multiple_issues__keys(self):
         """
-        Проверяет работу фильтра, который отбирает значения по полю issue__key
-        В данном тесте проверяется случай, когда ищется несколько тасков
+        Checks the operation of the filter that selects values by the issue_key field
+        This test checks the case when several tasks are searched
         """
         response = self.client.get(self.base_worklogs_view + '?updated=&started=&created=&account_id=&issue__project'
                                                              '=&issue__key=add_test-234, test-123&updated_start_date'
@@ -143,7 +144,8 @@ class IssueBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_issues_info_display_get(self):
         """
-        Проверяет работу вью и сериализатора, которые отображают информацию о тасках из Jira, с методом get
+        Checks the operation of the view and the serializer, which display information about tasks from Jira,
+        with the get method
         """
         response = self.client.get(self.base_issues_view)
         issue_info = IssuesInfo.objects.values(*self.test_data_issue_fields)
@@ -152,7 +154,8 @@ class IssueBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_issues_info_display_head(self):
         """
-        Проверяет работу вью и сериализатора, которые отображают информацию о тасках из Jira, с методом head
+        Checks the operation of the view and the serializer, which display information about tasks from Jira,
+        with the head method
         """
         response = self.client.head(self.base_issues_view)
         issue_info = IssuesInfo.objects.values(*self.test_data_issue_fields)
@@ -161,14 +164,14 @@ class IssueBaseViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_issues_info_display_prohibited_methods(self):
         """
-        Проверяет, что вью не работает с http-методами, помимо указанных (get, head)
+        Checks that the view does not work with http methods other than those specified (get, head)
         """
         response = self.client.post(self.base_issues_view)
         self.assertEqual(response.status_code, 405)
 
     def test_issues_data_filter_by_key(self):
         """
-        Проверяет работу фильтра, который отбирает значения по полю key
+        Checks the operation of the filter that selects values by the key field
         """
         response = self.client.get(self.base_issues_view + '?key=test-123')
         issue_info = IssuesInfo.objects.filter(key='test-123').values()
