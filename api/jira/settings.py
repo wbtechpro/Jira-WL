@@ -164,12 +164,14 @@ USERNAME = os.environ.get('JIRA_USERNAME')
 API_TOKEN = os.environ.get('JIRA_API_TOKEN')
 
 
-FILENAME_PERCENTS = os.path.join(BASE_DIR, 'last-month-by-percents.json')  # Использовался в старых версиях, когда сохранялось в файл
-FILENAME_DAY_WORKLOGS = os.path.join(BASE_DIR, 'last-day-worklogs.json')  # Использовался в старых версиях, когда сохранялось в файл
-FILENAME_WEEK_WORKLOGS = os.path.join(BASE_DIR, 'last-week-worklogs.json')  # Использовался в старых версиях, когда сохранялось в файл
+FILENAME_PERCENTS = os.path.join(BASE_DIR, 'last-month-by-percents.json')  # Used in older versions when saving to a
+# file
+FILENAME_DAY_WORKLOGS = os.path.join(BASE_DIR, 'last-day-worklogs.json')  # Used in older versions when saving to a file
+FILENAME_WEEK_WORKLOGS = os.path.join(BASE_DIR, 'last-week-worklogs.json')  # Used in older versions when saving to a
+# file
 
 #  Bunch of id's for exclude from ToPercentConverter
-TO_PERCENT_ID_FOR_EXCLUDE = (   # Использовался в старых версиях, когда сохранялось в файл
+TO_PERCENT_ID_FOR_EXCLUDE = (   # Used in older versions when saving to a file
     '5e4e744c2110470c8da215dc',
     '557058:5ac2a471-aeb0-4190-a807-d082cff8db72',
     '557058:555ee601-6614-4cd0-9ecb-51538aad9ccd',

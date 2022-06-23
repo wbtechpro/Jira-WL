@@ -7,10 +7,11 @@ from client.models import PeriodForDownloadModel
 
 class Command(BaseCommand):
     """
-    Обновляет конечную дату для скачивания ворклогов: берет 28 число текущих месяца и года.
-    Также обновляет количество дней для скачивания так, чтобы между текущей датой и датой предыдущего обновления
-    проходил месяц. К примеру, с 2022-04-28 до 2022-03-28 должен пройти 31 день, а с 2022-03-28 до 2022-02-28 - 28.
-    То есть количество дней всегда разное в зависимости от месяца
+    Updates the end date for downloading worklogs: takes the 28th of the current month and year.
+    Also updates the number of days to download so that between the current date and the date of the previous update
+    a month passed. For example, from 2022-04-28 to 2022-03-28 31 days should pass,
+    and from 2022-03-28 to 2022-02-28 - 28.
+    That is, the number of days is always different depending on the month.
     """
 
     def handle(self, *args, **options):

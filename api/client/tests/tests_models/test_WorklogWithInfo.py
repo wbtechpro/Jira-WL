@@ -8,8 +8,8 @@ class IssueModelTest(WorklogWithInfoTestsSetUp):
 
     def test_worklog_queryset_returns_grouped_by_orders_tasks_and_logged_time(self):
         """
-        Проверяет, действительно ли менеджер WorklogQuerySet возвращает данные модели WorklogWithInfo, сгрупированные
-        по задачам, принадлежащим к заказам, и считает суммарное затраченное по ворклогам время
+        Checks if the WorklogQuerySet manager actually returns data from the WorklogWithInfo model, grouped by tasks
+        belonging to orders, and calculates the total time spent by worklogs
         """
         model_data = WorklogWithInfo.objects.values('issue__key', 'issue__project',
                                                     'issue__agreed_order_finolog__finolog_id', ) \
@@ -19,8 +19,8 @@ class IssueModelTest(WorklogWithInfoTestsSetUp):
 
     def test_worklogs_filtered_by_account_id(self):
         """
-        Проверяет, действительно функция by_jira_account_id фильтрует ворклоги по id пользователя
-        Для теста в БД добавлены один воркглог пользователя с id 0 и два ворклога пользователя с id 1
+        Checks if the by_jira_account_id function actually filters worklogs by user id.
+        For the test, one user worklog with id 0 and two user worklogs with id 1 have been added to the database
         """
         model_data_0 = WorklogWithInfo.objects.filter(account_id='0')
         model_data_1 = WorklogWithInfo.objects.filter(account_id='1')
@@ -33,7 +33,7 @@ class IssueModelTest(WorklogWithInfoTestsSetUp):
 
     def test_string_worklog_id_representation(self):
         """
-        Проверяет работу метода __str__, который должен возвращать id ворклога
+        Checks the work of the __str__ method, which should return the id of the worklog
         """
         model_data = WorklogWithInfo.objects.all().first()
         self.assertEqual(model_data.__str__(), 'Ворклог с jira_id 00')
@@ -41,7 +41,8 @@ class IssueModelTest(WorklogWithInfoTestsSetUp):
     #
     def test_save_data_from_json(self):
         """
-        Проверяет работу переопределенного метода save, который берет данные для модели из JSON, полученного из Jira API
+        Tests the work of the overridden save method, which takes data for the model from JSON received from the Jira
+        API
         """
         instance_json_data = loads(dumps({"author": {"displayName": "Random Randomovich", "accountId": "0"},
                                           "self": "random.url/three", "created": "2022-01-01 10:00:00",

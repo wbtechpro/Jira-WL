@@ -8,9 +8,9 @@ class IssueModelTest(IssuesInfoTestsSetUp):
 
     def test_issue_queryset_returns_unique_agreed_order_key(self):
         """
-        Проверяет, действительно ли менеджер IssueQuerySet возвращает данные модели IssuesInfo с уникальным значением
-        agreed_order_key.
-        Для теста в БД IssuesInfo добавлены два таска с несогласованными заказами ("not_agreed_order")
+        Checks if the IssueQuerySet manager actually returns data from the IssuesInfo model with a unique
+        agreed_order_key value. For the test, two tasks with non-agreed orders ("not_agreed_order") have been added
+        to the IssuesInfo database
         """
         model_data = IssuesInfo.objects.values('agreed_order_key')
         model_data_unique_orders = model_data.distinct('agreed_order_key')
@@ -21,14 +21,15 @@ class IssueModelTest(IssuesInfoTestsSetUp):
 
     def test_string_issue_name_representation(self):
         """
-        Проверяет работу метода __str__, который должен возвращать название таска
+        Checks the operation of the __str__ method, which should return the name of the task
         """
         model_data = IssuesInfo.objects.all().first()
         self.assertEqual(model_data.__str__(), 'random0')
 
     def test_save_data_from_json(self):
         """
-        Проверяет работу переопределенного метода save, который берет данные для модели из JSON, полученного из Jira API
+        Tests the work of the overridden save method, which takes data for the model from JSON received from the Jira
+        API
         """
         instance_json_data = loads(dumps({"self": "random.url/test", "fields": {"summary": "test"},
                                           "key": "test-123", "id": 1, "agreed_order_key": "not_agreed_order"}))
@@ -44,8 +45,8 @@ class IssueModelTest(IssuesInfoTestsSetUp):
 
     def test_is_order_agreed(self):
         """
-        Проверяет работу метода-свойства is_agreed_order, который проверят, есть ли у заказа специальное поле
-        отправки в Финолог
+        Checks the operation of the is_agreed_order property method, which will check if the order has a special send
+        field to Finolog
         """
         IssuesInfo(json_data=self.instance_data_2).save()
         instance_data_1 = IssuesInfo.objects.all().last().is_agreed_order
@@ -55,14 +56,14 @@ class IssueModelTest(IssuesInfoTestsSetUp):
 
     def test_get_agreed_order_key(self):
         """
-        Проверяет работу метода _get_agreed_order_key, который заполняет поле индекса заказа в зависимости от того,
-        согласован ли он, и, если да, то является ли таск сам согласованным заказом или имеет родительский заказ
+        Checks the operation of the _get_agreed_order_key method, which populates the order index field depending on
+        whether it is matched, and, if so, whether the task itself is a matched order or has a parent order
         """
-        instance_data_0 = IssuesInfo.objects.all().first()._get_agreed_order_key()  # таск с несогласованным заказом
+        instance_data_0 = IssuesInfo.objects.all().first()._get_agreed_order_key()  # task with a non-agreed order
         IssuesInfo(json_data=self.instance_data_2).save()
-        instance_data_1 = IssuesInfo.objects.all().last()._get_agreed_order_key()  # таск, сам являющийся заказом
+        instance_data_1 = IssuesInfo.objects.all().last()._get_agreed_order_key()  # a task that is itself an order
         IssuesInfo(json_data=self.instance_data_3).save()
-        instance_data_2 = IssuesInfo.objects.all().last()._get_agreed_order_key()  # таск, имеющий родительский заказ
+        instance_data_2 = IssuesInfo.objects.all().last()._get_agreed_order_key()  # a task that has a parent order
         self.assertEqual(instance_data_0, 'not_agreed_order')
         self.assertEqual(instance_data_1, 'test-123')
         self.assertEqual(instance_data_2, 'TEST-123')

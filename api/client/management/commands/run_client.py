@@ -12,17 +12,17 @@ from client.forms import period_in_days_does_not_exceed_3_months
 
 class Command(BaseCommand):
     """
-    Запускает Jira клиента.
-    Удаляет все данные и записывает заново.
+    Launches the Jira client.
+    Deletes all data and writes again.
     """
 
     help = 'Запускает Jira клиента'
 
-    # Для того, чтобы передать аргументы команде run_client вручную, необходимо указать --end-date и/или --days_before
-    # соответственно. Это сделано для того, чтобы аргументы не были позиционными и чтобы можно было комбинировать
-    # значения, введенные вручную, со значениями из админки
+    # In order to manually pass arguments to the run_client command, --end-date and/or --days_before must be specified,
+    # respectively. This is done so that the arguments are not positional and so that you can combine manually entered
+    # values with values from the admin panel
     def add_arguments(self, parser):
-        parser.add_argument('--end_date', nargs='?', type=str, default=None)  # дату надо вводить в формате YYYY-MM-DD
+        parser.add_argument('--end_date', nargs='?', type=str, default=None)  # date must be entered in YYYY-MM-DD format
         parser.add_argument('--days_before', nargs='?', type=int, default=None)
 
     def handle(self, *args, **options):
@@ -35,11 +35,11 @@ class Command(BaseCommand):
             days_before_from_admin = PeriodForDownloadModel.objects.get(pk=1).days
             end_date_from_admin = PeriodForDownloadModel.objects.get(pk=1).end_date
             days_before_command_input = options['days_before']
-            end_date = options['end_date']  # конечная дата, вручную переданная команде run_client как аргумент
+            end_date = options['end_date']  # the end date manually passed to the run_client command as an argument
 
-            if end_date is None:  # проверка, что считать конечной датой отсчета
+            if end_date is None:  # checking what is considered the end date of the countdown
                 if end_date_from_admin is None:
-                    end_date = datetime.datetime.now()  # дефолтное значение конечной даты - текущая дата
+                    end_date = datetime.datetime.now()  # the default value of the end date is the current date
                 else:
                     end_date = end_date_from_admin
             else:

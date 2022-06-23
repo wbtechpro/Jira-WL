@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from client.helpers.helpers import jira_string_time_to_unix_timestamp
 
-# НЕ ИСПОЛЬЗУЕТСЯ - АРТЕФАКТ, ОСТАВЛЕН ДЛЯ ПРИМЕРА
+# NOT USED - ARTIFACT LEFT FOR EXAMPLE
 
 class ToFormattedWorklogsConverter:
 

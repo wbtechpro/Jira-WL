@@ -6,9 +6,9 @@ from client.models import PeriodForDownloadModel
 
 class Command(BaseCommand):
     """
-    Обновляет конечную дату для промежуточного (раз в неделю ночью с понедельника на вторник) скачивания ворклогов:
-    ставит такой датой текущую, если в этот день вторник.
-    Количество дней для скачивания ворклогов - 90. Его можно будет в любой момент поменять в админке
+    Updates the end date for the intermediate (once a week at night from Monday to Tuesday) download of worklogs:
+    sets this date to the current one if that day is Tuesday.
+    The number of days for downloading worklogs is 90. It can be changed at any time in the admin panel
     """
 
     def handle(self, *args, **options):

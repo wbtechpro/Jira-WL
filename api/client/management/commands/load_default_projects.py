@@ -27,7 +27,7 @@ default_projects = (
 
 class Command(BaseCommand):
     """
-    (Пере)создает дефолтные проекты
+    (Re)creates default projects
     """
 
     def handle(self, *args, **options):

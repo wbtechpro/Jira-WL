@@ -3,11 +3,11 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 
 
-# КОМАНДА НЕ ВЫПОЛНЯЕТСЯ АВТОМАТИЧЕСКИ! МОЖЕТ БЫТЬ ВЫЗВАНА ТОЛЬКО ВРУЧНУЮ
+# THE COMMAND IS NOT AUTOMATICALLY PERFORMED! CAN ONLY BE CALLED BY MANUAL
 
 class Command(BaseCommand):
     """
-    Создает суперпользователя
+    Creates superuser
     """
 
     help = 'Создает суперпользователя для админки'

@@ -32,8 +32,8 @@ class FinologProjectAdmin(admin.ModelAdmin):
     list_display = ('jira_key', 'finolog_id',)
 
 
-# ДОБАВЛЕНИЕ В АДМИН-ПАНЕЛЬ ВОЗМОЖНОСТИ УКАЗАНИЯ КОЛИЧЕСТВА ДНЕЙ, ЗА КОТОРОЕ НЕОБХОДИМО ЗАГРУЗИТЬ ВОРКЛОГИ,
-# И КОНЕЧНОЙ ДАТЫ ОТСЧЕТА
+# ADDING TO THE ADMIN PANEL THE POSSIBILITY TO INDICATE THE NUMBER OF DAYS FOR WHICH WORKLOGS SHOULD BE DOWNLOADED
+# AND THE END DATE OF COUNTDOWN
 
 class WorklogsDownloadPeriodAdmin(admin.ModelAdmin):
     model = PeriodForDownloadModel

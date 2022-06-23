@@ -8,9 +8,8 @@ class GroupedByProjectWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_finolog_projects_view_and_serializer_display_get(self):
         """
-        Проверяет работу функции list вью и сериализатора, которые отображают данные о проектах, согласованных
-        как заказ в Финологе, из БД FinologProject, с методом get
-        Для тестов в БД додавлен один проект
+        Checks the operation of the list view function and the serializer, which display data on projects agreed as an order in Finolog, from the FinologProject database, with the get method
+        One project added for tests in the database
         """
         response = self.client.get(self.finolog_projects_view)
         finolog_projects__info = FinologProject.objects.values()
@@ -20,8 +19,8 @@ class GroupedByProjectWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_finolog_projects_view_and_serializer_display_head(self):
         """
-        Проверяет работу функции list вью и сериализатора, которые отображают данные о проектах, согласованных
-        как заказ в Финологе, из БД FinologProject, с методом head
+        Checks the operation of the list view function and the serializer, which display data on projects agreed as
+        an order in Finolog, from the FinologProject database, with the head method
         """
         response = self.client.head(self.finolog_projects_view)
         finolog_projects__info = FinologProject.objects.values()
@@ -31,8 +30,9 @@ class GroupedByProjectWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_finolog_projects_view_and_serializer_retrieve_get_with_existent_pk(self):
         """
-        Проверяет работу функции retrieve вью и сериализатора, которые отображают данные о проектах,
-        согласованных как заказ в Финологе, из БД FinologProject, с методом get и с существующим pk
+        Checks the operation of the retrieve function of the view and the serializer, which display data about
+        projects agreed as an order in Finolog, from the FinologProject database, with the get method and with the
+        existing pk
         """
         finolog_projects_info = FinologProject.objects.first()
         response = self.client.get(self.finolog_projects_view + f'{finolog_projects_info.pk}/')
@@ -43,8 +43,9 @@ class GroupedByProjectWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_finolog_projects_view_and_serializer_retrieve_get_with_nonexistent_pk(self):
         """
-        Проверяет работу функции retrieve вью и сериализатора, которые отображают данные о проектах,
-        согласованных как заказ в Финологе, из БД FinologProject, с методом get и с существующим pk
+        Checks the operation of the retrieve function of the view and the serializer, which display data about
+        projects agreed as an order in Finolog, from the FinologProject database, with the get method and with the
+        existing pk
         """
         response = self.client.get(self.finolog_projects_view + '11111111/')
         self.assertEqual(response.status_code, 404)
@@ -52,8 +53,9 @@ class GroupedByProjectWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_finolog_projects_view_and_serializer_retrieve_head_with_existent_pk(self):
         """
-        Проверяет работу функции retrieve вью и сериализатора, которые отображают данные о проектах,
-        согласованных как заказ в Финологе, из БД FinologProject, с методом head и с существующим pk
+        Checks the operation of the retrieve function of the view and the serializer, which display data about
+        projects agreed as an order in Finolog, from the FinologProject database, with the head method and with an
+        existing pk
         """
         finolog_projects_info = FinologProject.objects.first()
         response = self.client.head(self.finolog_projects_view + f'{finolog_projects_info.pk}/')
@@ -64,8 +66,9 @@ class GroupedByProjectWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_finolog_projects_view_and_serializer_retrieve_head_with_nonexistent_pk(self):
         """
-        Проверяет работу функции retrieve вью и сериализатора, которые отображают данные о проектах,
-        согласованных как заказ в Финологе, из БД FinologProject, с методом head и с существующим pk
+        Checks the operation of the retrieve function of the view and the serializer, which display data about
+        projects agreed as an order in Finolog, from the FinologProject database, with the head method and with an
+        existing pk
         """
         response = self.client.head(self.finolog_projects_view + '11111111/')
         self.assertEqual(response.status_code, 404)
@@ -73,9 +76,9 @@ class GroupedByProjectWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_finolog_projects_view_and_serializer_creation(self):
         """
-        Проверяет работу функции create вью, которая валидирует данные и в случае успеха создает новую запись в БД
-        FinologProjects
-        В текущий момент в БД FinologProject находится один проект. По итогу работы теста должен быть создан второй
+        Checks the work of the create function of the view, which validates the data and, if successful,
+        creates a new record in the FinologProjects database
+        At the moment, there is one project in the FinologProject database. As a result of the test, a second
         """
         response = self.client.post(self.finolog_projects_view, self.finolog_project_data_for_creation)
         self.assertEqual(response.status_code, 201)
@@ -85,10 +88,10 @@ class GroupedByProjectWorklogsViewAndSerializer(ViewsAndSerializersTestSetUp):
 
     def test_finolog_projects_view_and_serializer_creation_with_improper_methods(self):
         """
-        Проверяет работу функции create вью, которая валидирует данные и в случае успеха создает новую запись в БД
-        FinologProjects, с неправильным методом (get вместо post) В текущий момент в БД FinologProject находится один
-        проект. По итогу работы создание второго не должно произойти - вместо этого должен отобразиться уже
-        существующий проект
+        Checks the work of the create function of the view, which validates the data and, if successful,
+        creates a new record in the FinologProjects database, with the wrong method (get instead of post) Currently,
+        there is one project in the FinologProject database. As a result of the work, the creation of the second
+        should not occur - instead, an existing project should be displayed
         """
         response = self.client.get(self.finolog_projects_view, self.finolog_project_data_for_creation)
         self.assertNotEqual(response.status_code, 201)

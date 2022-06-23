@@ -3,7 +3,7 @@ from django.conf import settings
 from client.helpers.helpers import (
     get_time_by_project_from_worklog, get_percent_by_project, unite_wbtech_projects)
 
-# НЕ ИСПОЛЬЗУЕТСЯ - АРТЕФАКТ, ОСТАВЛЕН ДЛЯ ПРИМЕРА
+# NOT USED - ARTIFACT LEFT FOR EXAMPLE
 
 
 class ToPercentByProjectsConverter:

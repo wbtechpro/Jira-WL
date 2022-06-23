@@ -12,8 +12,8 @@ from client.converters.to_formatted_worklogs import (
 from client.helpers.file_writer import write_as_json_file
 
 
-# ФАЙЛ СЛОМАН!
-# ОСТАВЛЕН ДЛЯ ПРИМЕРА, КАК ИСПОЛЬЗОВАТЬ КОНВЕРТЕРЫ
+# FILE IS BROKEN!
+# LEFT FOR EXAMPLE HOW TO USE CONVERTERS
 
 
 def load_and_process_within_last_month():
